@@ -9,12 +9,13 @@ window.onload = function () {
     //init game canvas object
     var myGameArea = {
         xTiles: 20,
-        yTiles: 10,
+        yTiles: 13,
         gridHeight: 50,
         gridWidth: 50,
         players: [],
         destroyableArea: [],
         solidArea: [],
+        tiles:[],
         //set up initial configuration
         numberOfPlayers: 1,
         bombsize: 25,
@@ -26,27 +27,46 @@ window.onload = function () {
             this.canvas.width = this.gridWidth * this.xTiles
             this.canvas.height = this.gridHeight * this.yTiles
             this.context = this.canvas.getContext("2d")
-            var player1 = new Player(this.context, this.id++, 100, 100, this.gridWidth, this.gridHeight)
+            var player1 = new Player(this.context, this.id++, 50, 50, this.gridWidth-5, this.gridHeight-5)
             var player2 = new Player(this.context, this.id++, 600, 500, this.gridWidth, this.gridHeight)
             this.players.push(player1)
             //this.players.push(player2)
             //create grid border
+            //paint in grid
+            for (var i = 0; i < this.xTiles; i++) {
+                for (var j = 0; j < this.yTiles; j++) {
+                    this.tiles.push(new Tile(this.context, this.id++, i * this.gridWidth, j * this.gridWidth, this.gridWidth, this.gridHeight))
+                }
+            }
+            //great border
+            //horizontal
             for (var i = 0; i < this.xTiles; i++) {
                 this.solidArea.push(new SolidArea(this.context, this.id++, i * this.gridWidth, 0, this.gridWidth, this.gridHeight))
                 this.solidArea.push(new SolidArea(this.context, this.id++, i * this.gridWidth, this.canvas.height - this.gridHeight, this.gridWidth, this.gridHeight))
             }
+            //vertical
             for (var j = 1; j < this.yTiles - 1; j++) {
                 this.solidArea.push(new SolidArea(this.context, this.id++, 0, j * this.gridHeight, this.gridWidth, this.gridHeight))
                 this.solidArea.push(new SolidArea(this.context, this.id++, this.canvas.width - this.gridWidth, j * this.gridHeight, this.gridWidth, this.gridHeight))
             }
 
-            this.solidArea.push(new SolidArea(this.context, this.id++, 600, 150, this.gridWidth, this.gridHeight))
-            this.solidArea.push(new SolidArea(this.context, this.id++, 500, 200, this.gridWidth, this.gridHeight))
-            this.solidArea.push(new SolidArea(this.context, this.id++, 100, 50, this.gridWidth, this.gridHeight))
+            //maze grid
+            for (var i = 7; i < this.xTiles; i++) {
+                for (var j = 7; j < this.yTiles; j++) {
+                    if (j % 2 == 0&& i % 2 ==0) {
+                        this.solidArea.push(new SolidArea(this.context, this.id++, i * this.gridWidth, j * this.gridHeight, this.gridWidth, this.gridHeight))
+                    }
+                }
+                if(i%2===1) {
+                    //this.solidArea.push(new SolidArea(this.context, this.id++, i * this.gridWidth, j * this.gridHeight, this.gridWidth, this.gridHeight))
+                }
+            }
 
-            this.frameNo = 0
-            //reload canvas
-
+            this.solidArea.push(new SolidArea(this.context, this.id++, 350, 200, this.gridWidth, this.gridHeight))
+            //destroyable area
+            this.destroyableArea.push(new DestroyableArea(this.context, this.id++, 150, 150, this.gridWidth, this.gridHeight))
+            this.destroyableArea.push(new DestroyableArea(this.context, this.id++, 150, 200, this.gridWidth, this.gridHeight))
+            this.destroyableArea.push(new DestroyableArea(this.context, this.id++, 150, 250, this.gridWidth, this.gridHeight))
 
             //add event listeners for keyboard
             window.addEventListener('keydown', function (e) {
@@ -58,7 +78,6 @@ window.onload = function () {
                 myGameArea.keys[e.keyCode] = false;
                 //key listener for bombs
                 if (e.keyCode == 32) {
-                    console.log("key presseed")
                     var dx = true
                     var dy = true
                     //check if bomb can be planted there
@@ -70,11 +89,13 @@ window.onload = function () {
                     }//TODO uncomment dis
 
                     if (dx && dy) {
-                        myGameArea.players[0].plantBomb();
+
+                        //TODO when importing actual images, change getGridTileCenterPoint function to getGridTilePoint
+                        var bombCoords = getGridTilePoint(getGridPosition(myGameArea.players[0], myGameArea), myGameArea.xTiles, myGameArea.yTiles, myGameArea.gridWidth, myGameArea.gridHeight)
+                        myGameArea.players[0].plantBomb(bombCoords[0], bombCoords[1]);
                     }
                 }
                 if (e.keyCode == 96) {
-                    console.log("key presseed")
                     var dx = true
                     var dy = true
                     //check if bomb can be planted there
@@ -94,10 +115,8 @@ window.onload = function () {
                     }
                 }
             })
-            //this.interval = setInterval(updateGame, 1000.0 / 60.0)
             updateGame()
         },
-
 
 
         clear: function () {
@@ -160,11 +179,22 @@ window.onload = function () {
         }
 
 
+        for (var i = 0; i < myGameArea.tiles.length; i++) {
+            myGameArea.tiles[i].update()
+        }
         for (var i = 0; i < myGameArea.solidArea.length; i++) {
             myGameArea.solidArea[i].update()
         }
         for (var i = 0; i < myGameArea.destroyableArea.length; i++) {
-            myGameArea.destroyableArea[i].update()
+            desArea = myGameArea.destroyableArea[i]
+
+            if (desArea.triggered && !desArea.exploding) {
+                desArea.explode()
+            }
+            else if(desArea.exploded){
+                myGameArea.destroyableArea.splice(myGameArea.destroyableArea.indexOf(desArea), 1)
+            }
+            desArea.update()
         }
 
         for (var i = 0; i < myGameArea.players.length; i++) {
@@ -172,12 +202,11 @@ window.onload = function () {
                 var total = Math.abs(myGameArea.players[i].speedX) + Math.abs(myGameArea.players[i].speedY)
                 if (total != 0) {
                     var scalar = Math.sqrt(total) / total
-                    myGameArea.players[i].speedX *= (myGameArea.moveSize * scalar)
-                    myGameArea.players[i].speedY *= (myGameArea.moveSize * scalar)
+                    myGameArea.players[i].speedX *= (myGameArea.moveSize * scalar) * myGameArea.players[i].speed
+                    myGameArea.players[i].speedY *= (myGameArea.moveSize * scalar) * myGameArea.players[i].speed
                 }
             }
             //update movement
-            //console.log("updating player innit")
             updatePlayerPosition(myGameArea.players[i])
             myGameArea.players[i].update()
         }
@@ -192,46 +221,55 @@ window.onload = function () {
                 }
                 //TODO restore this
                 else if (bombb.exploded) {
-                    console.log("removding bbombss")
                     myGameArea.players[i].bombs.splice(myGameArea.players[i].bombs.indexOf(bombb), 1)
+                    //bombb=null
                 }
                 //login here to injure player/destroy wall
                 else if (bombb.exploding) {
                     for (var q = 0; q < bombb.fire.length; q++) {
+                        if (bombb.fire[q] != null) {
 
+                            bombb.fire[q].update()
+                            removeFlag = false
+                            for (var x = 0; x < myGameArea.players.length; x++) {
+                                if (getGridPosition(myGameArea.players[x], myGameArea) == getGridPosition(bombb.fire[q], myGameArea)) {
+                                    //window.alert("you died")
+                                    //TODO restore this if
+                                    //myGameArea.players[x].alive = false
+                                    removeFlag = true
+                                }
+                            }
 
+                            for (var x = 0; x < myGameArea.destroyableArea.length; x++) {
+                                if (getGridPosition(myGameArea.destroyableArea[x], myGameArea) == getGridPosition(bombb.fire[q], myGameArea)) {
+                                    myGameArea.destroyableArea[x].triggered = true
+                                    removeFlag = true
+                                    console.log("triggered")
+                                }
+                            }
 
-                        console.log(bombb.fire)
-                        for (var x = 0; x < myGameArea.players.length; x++) {
+                            for (var x = 0; x < myGameArea.solidArea.length; x++) {
+                                if (getGridPosition(myGameArea.solidArea[x], myGameArea) == getGridPosition(bombb.fire[q], myGameArea)) {
+                                    removeFlag = true
+                                    console.log("triggered")
+                                }
+                            }
 
-                            if (getGridPosition(myGameArea.players[x]) == getGridPosition(bombb.fire[q])) {
-                                console.log("ahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
-                                window.alert("you died")
-                                myGameArea.players[x].alive = false
+                            if (removeFlag) {
+                                //set to null to keep positioning of all fires
+                                bombb.fire[q] = null
+                                //bombb.fire.splice(bombb.fire.indexOf(bombb.fire[q]), 1)
                             }
                         }
-
-                        for (var x = 0; x < myGameArea.destroyableArea.length; x++) {
-                            if (getGridPosition(myGameArea.destroyableArea[x]) == getGridPosition(bombb[fire[q]])) {
-                                //myGameArea.destroyableArea[x].injure()
-                            }
-                        }
-                        bombb.fire[q].update()
                     }
+
                 }
             }
         }
     }
 
-    function getGridPosition(object){
-        //console.log("aaaaaaaaaaa")
-        //console.log(Math.floor(object.x/object.width))
-        //console.log(Math.floor(object.y/object.height))
-        //console.log(myGameArea.xTiles)
-        //console.log(Math.floor(object.x/object.width) + Math.floor((object.y/object.height))*myGameArea.xTiles)
-        //console.log("bbbbbbbbbbbbbbbbbbbbb")
-        return Math.floor(object.x/object.width) + Math.floor((object.y/object.height))*myGameArea.xTiles
-    }
+
+
     function updatePlayerPosition(player) {
         //check for collisions here
         var moveX = true
@@ -306,8 +344,6 @@ window.onload = function () {
 
         player.x += player.speedX
         player.y += player.speedY
-        player.centerX = player.x + (player.width / 2)
-        player.centerY = player.y + (player.height / 2)
     }
 
     function crashWithRectangele(player, otherobj) {
