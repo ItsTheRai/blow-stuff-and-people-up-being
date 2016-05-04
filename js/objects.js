@@ -3,6 +3,8 @@
  */
 
 function Player(cnt, id, x, y, width, height) {
+    this.sprite = null
+
     this.alive = true
     this.speedX = 0
     this.speedY = 0
@@ -15,43 +17,203 @@ function Player(cnt, id, x, y, width, height) {
     this.context = cnt
     this.bombs = []
     this.health = 100
-    this.speed = 2
+    this.speed = 1
     this.power = 4
     this.ammoType = 0
     this.maxbombs = 1000
-    this.bombsize = 25
-    //draw the object
-    this.context.beginPath()
-    this.context.rect(this.x, this.y, this.height, this.width)
-    this.context.fillRect(this.x, this.y, this.height, this.width)
-    this.context.closePath()
+    this.bombsize = 28
+    this.direction = 0
+    this.animations=[]
+    //set up all animations
+    var ss = new SpriteSheet('/pureBomberman/media/betty2.png', 48, 48)
+
+    this.animations.push(new Animation(this.context, ss, 15/this.speed, 0, 0))
+    this.animations.push(new Animation(this.context, ss, 15/this.speed, 0, 3))
+    this.animations.push(new Animation(this.context, ss, 15/this.speed, 4, 7))
+    this.animations.push(new Animation(this.context, ss, 15/this.speed, 8, 11))
+    this.animations.push(new Animation(this.context, ss, 15/this.speed, 12, 15))
+
+    this.update = function () {
+        if (this.alive) {
+            this.animations[this.direction].update()
+            this.animations[this.direction].draw(this.x, this.y)
+        }
+    }
 
     this.plantBomb = function (x, y) {
         if (this.bombs.length < this.maxbombs) {
-            var bomb = new Bomb(this.context, this.id++, this, x, y, this.bombsize, this.power)
+            var bomb = new Bomb(this.context, this.id++, this, x, y, this.bombsize, this.bombsize, this.power)
             this.bombs.push(bomb)
             console.log("the bomb has been planted")
         }
     }
+}
+
+function SpriteSheet(path, frameWidth, frameHeight) {
+    this.image = new Image()
+    this.frameWidth = frameWidth
+    this.frameHeight = frameHeight
+
+    var self = this
+    this.image.onload = function () {
+        console.log("loading image")
+        self.framesPerRow = Math.floor(self.image.width / self.frameWidth)
+        console.log(self.framesPerRow+ " frames per row")
+    }
+    this.image.src = path
+}
+
+function Animation(context, spritesheet, frameSpeed, startFrame, endFrame) {
+    this.context = context
+    var animationSequence = [];  // array holding the order of the animation
+    var currentFrame = 0;        // the current frame to draw
+    var counter = 0;             // keep track of frame rate
+
+    // create the sequence of frame numbers for the animation
+    for (var frameNumber = startFrame; frameNumber <= endFrame; frameNumber++)
+        animationSequence.push(frameNumber);
+
+    // Update the animation
+    this.update = function () {
+        // update to the next frame if it is time
+        if (counter == (frameSpeed - 1))
+            currentFrame = (currentFrame + 1) % animationSequence.length;
+        // update the counter
+        counter = (counter + 1) % frameSpeed;
+    }
+
+
+    // draw the current frame
+    this.draw = function (x, y) {
+        // get the row and col of the frame
+        var row = Math.floor(animationSequence[currentFrame] / spritesheet.framesPerRow);
+        var col = Math.floor(animationSequence[currentFrame] % spritesheet.framesPerRow);
+
+        this.context.drawImage(
+            spritesheet.image,
+            col * spritesheet.frameWidth, row * spritesheet.frameHeight,
+            spritesheet.frameWidth, spritesheet.frameHeight,
+            x, y,
+            spritesheet.frameWidth, spritesheet.frameHeight);
+    };
+}
+
+
+function Fire(cnt, id, x, y, width, height) {
+    this.sprite = null
+    this.active = true
+    this.timerLimit = 100
+    this.timer = 0
+    this.context = cnt
+    this.id = id
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+
+    var ss = new SpriteSheet('/pureBomberman/media/fire.png', 38, 38)
+    this.sprite = new Animation(this.context, ss, 120, 0, 5)
+    this.sprite.draw(this.x, this.y)
 
     this.update = function () {
-        if (this.alive) {
-            this.context.beginPath()
-            this.context.fillRect(this.x, this.y, this.width, this.height);
-            this.context.closePath()
-        }
+            this.sprite.update()
+            this.sprite.draw(this.x, this.y)
     }
 }
 
-function Bomb(cnt, id, player, x, y, radius, power) {
+function SolidArea(cnt, id, x, y, width, height) {
+    this.sprite = null
+    this.id = id
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+    this.context = cnt
+    //draw the object
+    var ss = new SpriteSheet('/pureBomberman/media/tile_wall.png', 32, 32)
+    this.sprite = new Animation(this.context, ss, 60, 0, 0)
+    this.sprite.update()
+    this.sprite.draw(this.x, this.y)
+
+    this.update = function () {
+        this.sprite.update()
+        this.sprite.draw(this.x, this.y)
+    }
+}
+
+function Tile(cnt, id, x, y, width, height) {
+    this.sprite = null
+    this.id = id
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+    this.context = cnt
+    //draw the object
+    var ss = new SpriteSheet('/pureBomberman/media/tile_grass.png', 32, 32)
+    this.sprite = new Animation(this.context, ss, 60, 0, 0)
+    this.sprite.update()
+    this.sprite.draw(this.x, this.y)
+
+    this.update = function () {
+        this.sprite.update()
+        this.sprite.draw(this.x, this.y)
+    }
+}
+
+function DestroyableArea(cnt, id, x, y, width, height) {
+    this.sprite = null
+    this.id = id
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+    this.context = cnt
+    this.triggered = false
+    this.exploding = false
+    this.exploded = false
+    this.stage = 0
+    this.explosionInterval = 500
+
+    console.log("created area")
+    //draw the object
+    var ss = new SpriteSheet('/pureBomberman/media/tile_wood.png', 32, 32)
+    this.sprite = new Animation(this.context, ss, 60, 0, 0)
+    this.sprite.update()
+    this.sprite.draw(this.x, this.y)
+
+    this.update = function () {
+        this.sprite.update()
+        this.sprite.draw(this.x, this.y)
+    }
+
+
+    this.explode = function () {
+        var self = this
+        this.exploding = true
+        var timer = setInterval(function () {
+            if (self.stage >= 3) {
+                self.exploded = true
+                clearInterval(timer)
+
+            }
+            else {
+                self.stage++
+                //TODO blow up animation here
+            }
+        }, self.explosionInterval)
+    }
+}
+
+function Bomb(cnt, id, player, x, y, width, height, power) {
+    this.sprite = null
     this.timer = 2000
     this.id = id
     this.player = player
     this.x = x
     this.y = y
-    this.radius = radius
-    this.width = radius * 2
-    this.height = radius * 2
+    this.width = width
+    this.height = height
     this.context = cnt
     this.exploded = false
     this.exploding = false
@@ -63,10 +225,18 @@ function Bomb(cnt, id, player, x, y, radius, power) {
     this.explosionInterval = 50
     this.explosionTimer = 500
 
-    this.context.beginPath();
-    this.context.arc(this.x + (this.width / 2), this.y + (this.height / 2), this.radius, 0, 2 * Math.PI);
-    this.context.stroke();
-    this.context.closePath()
+    var ss = new SpriteSheet('/pureBomberman/media/bomb.png', 28, 28)
+    this.sprite = new Animation(this.context, ss, 42, 0, 5)
+    this.sprite.draw(this.x, this.y)
+
+    this.update = function () {
+    if(this.timer>=0) {
+        this.timer -= 10
+        this.sprite.update()
+        this.sprite.draw(this.x, this.y)
+    }
+    }
+
 
     this.getStage = function () {
         if (this.power == 1) {
@@ -83,15 +253,6 @@ function Bomb(cnt, id, player, x, y, radius, power) {
         }
     }
 
-    this.update = function () {
-        this.timer -= 10
-        //TODO animation logic here based on bomb size
-        this.context.beginPath();
-        this.context.strokeStyle = "red"
-        this.context.arc(this.x + (this.width / 2), this.y + (this.height / 2), this.radius, 0, 2 * Math.PI);
-        this.context.stroke();
-        this.context.closePath()
-    }
 
     this.explode = function () {
         var self = this
@@ -130,8 +291,6 @@ function Bomb(cnt, id, player, x, y, radius, power) {
             //console.log(this.fire)
         }
         else if (this.stage == 3) {
-            //console.log(this.fire)
-
             if (this.fire[1] != null) {
                 this.fire.push(new Fire(this.context, this.id++, this.x + 2 * this.width, this.y, this.width, this.height))
             } else {
@@ -331,155 +490,36 @@ function Bomb(cnt, id, player, x, y, radius, power) {
             if (this.fire[13] != null) {
                 console.log("what what")
                 this.fire.push(new Fire(this.context, this.id++, this.x + 3 * this.width, this.y + 2 * this.height, this.width, this.height))
-            }else this.fire.push(null)
+            } else this.fire.push(null)
             if (this.fire[14] != null) {
                 console.log("what what")
                 this.fire.push(new Fire(this.context, this.id++, this.x + 2 * this.width, this.y + 3 * this.height, this.width, this.height))
-            }else this.fire.push(null)
+            } else this.fire.push(null)
             //
             //
             if (this.fire[15] != null) {
                 this.fire.push(new Fire(this.context, this.id++, this.x + 3 * this.width, this.y - 2 * this.height, this.width, this.height))
-            }else this.fire.push(null)
+            } else this.fire.push(null)
             if (this.fire[16] != null) {
                 this.fire.push(new Fire(this.context, this.id++, this.x + 2 * this.width, this.y - 3 * this.height, this.width, this.height))
-            }else this.fire.push(null)
+            } else this.fire.push(null)
             //
             //
             if (this.fire[17] != null) {
                 this.fire.push(new Fire(this.context, this.id++, this.x - 3 * this.width, this.y - 2 * this.height, this.width, this.height))
-            }else this.fire.push(null)
+            } else this.fire.push(null)
             if (this.fire[18] != null) {
                 this.fire.push(new Fire(this.context, this.id++, this.x - 2 * this.width, this.y - 3 * this.height, this.width, this.height))
-            }else this.fire.push(null)
+            } else this.fire.push(null)
             //
             //
             if (this.fire[19] != null) {
                 this.fire.push(new Fire(this.context, this.id++, this.x - 3 * this.width, this.y + 2 * this.height, this.width, this.height))
-            }else this.fire.push(null)
+            } else this.fire.push(null)
             if (this.fire[20] != null) {
                 this.fire.push(new Fire(this.context, this.id++, this.x - 2 * this.width, this.y + 3 * this.height, this.width, this.height))
-            }else this.fire.push(null)
+            } else this.fire.push(null)
         }
     }
 }
 
-function Fire(cnt, id, x, y, width, height) {
-    this.active = true
-    this.timerLimit = 100
-    this.timer = 0
-    this.radius = width / 2
-    this.context = cnt
-    this.id = id
-    this.x = x
-    this.y = y
-    this.width = width
-    this.height = height
-
-    this.update = function () {
-        this.timer += 10
-        if (this.timer >= this.timerLimit) {
-            this.active = false
-        }
-        //TODO explosion animation and shizzle
-
-        this.context.beginPath()
-        this.context.fillStyle = "black"
-        this.context.arc(this.x + (this.width / 2), this.y + (this.height / 2), this.radius, 0, 2 * Math.PI)
-        this.context.fill()
-        this.context.closePath()
-    }
-
-}
-
-function SolidArea(cnt, id, x, y, width, height) {
-    this.id = id
-    this.x = x
-    this.y = y
-    this.width = width
-    this.height = height
-    this.context = cnt
-    //draw the object
-    this.context.beginPath();
-    this.context.rect(this.x, this.y, this.height, this.width)
-    this.context.fillRect(this.x, this.y, this.height, this.width)
-    this.context.closePath()
-
-    this.update = function () {
-        this.context.beginPath();
-        this.context.fillRect(this.x, this.y, this.width, this.height);
-        this.context.closePath()
-    }
-}
-
-function Tile(cnt, id, x, y, width, height) {
-    this.id = id
-    this.x = x
-    this.y = y
-    this.width = width
-    this.height = height
-    this.context = cnt
-    //draw the object
-    this.context.beginPath()
-    this.context.lineWidth = "2"
-    this.context.strokeStyle = "gray"
-    this.context.rect(this.x, this.y, this.height, this.width)
-    this.context.stroke()
-    this.context.closePath()
-    this.update = function () {
-        this.context.beginPath()
-        this.context.lineWidth = "2"
-        this.context.strokeStyle = "gray"
-        this.context.rect(this.x, this.y, this.height, this.width)
-        this.context.stroke()
-        this.context.closePath()
-    }
-}
-
-function DestroyableArea(cnt, id, x, y, width, height) {
-    this.id = id
-    this.x = x
-    this.y = y
-    this.width = width
-    this.height = height
-    this.context = cnt
-    this.triggered = false
-    this.exploding = false
-    this.exploded = false
-    this.stage = 0
-    this.explosionInterval = 500
-
-    console.log("created area")
-    //draw the object
-    this.context.beginPath()
-    this.context.lineWidth = "20"
-    this.context.strokeStyle = "green"
-    this.context.rect(this.x, this.y, this.height, this.width)
-    //this.context.fillRect(this.x, this.y, this.height, this.width)
-    this.context.stroke()
-    this.context.closePath()
-    this.update = function () {
-        this.context.beginPath()
-        this.context.lineWidth = "20"
-        this.context.strokeStyle = "green"
-        this.context.rect(this.x, this.y, this.height, this.width)
-        this.context.stroke()
-        this.context.closePath()
-    }
-
-    this.explode = function () {
-        var self = this
-        this.exploding = true
-        var timer = setInterval(function () {
-            if (self.stage >= 3) {
-                self.exploded = true
-                clearInterval(timer)
-
-            }
-            else {
-                self.stage++
-                //TODO blow up animation here
-            }
-        }, self.explosionInterval)
-    }
-}

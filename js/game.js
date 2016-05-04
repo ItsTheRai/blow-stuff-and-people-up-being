@@ -8,17 +8,17 @@ window.onload = function () {
     //init variables
     //init game canvas object
     var myGameArea = {
-        xTiles: 20,
-        yTiles: 13,
-        gridHeight: 50,
-        gridWidth: 50,
+        xTiles: 40,
+        yTiles: 19,
+        gridHeight: 32,
+        gridWidth: 32,
         players: [],
         destroyableArea: [],
         solidArea: [],
         tiles:[],
         //set up initial configuration
         numberOfPlayers: 1,
-        bombsize: 25,
+        //bombsize: 25,
         moveSize: 3,   //number of pixels an object is moved by by a single press of a button
         id: 0,
         canvas: this.document.getElementById("mycanvas"),
@@ -27,7 +27,7 @@ window.onload = function () {
             this.canvas.width = this.gridWidth * this.xTiles
             this.canvas.height = this.gridHeight * this.yTiles
             this.context = this.canvas.getContext("2d")
-            var player1 = new Player(this.context, this.id++, 50, 50, this.gridWidth-5, this.gridHeight-5)
+            var player1 = new Player(this.context, this.id++, 50, 50, 38, 38)
             var player2 = new Player(this.context, this.id++, 600, 500, this.gridWidth, this.gridHeight)
             this.players.push(player1)
             //this.players.push(player2)
@@ -90,7 +90,6 @@ window.onload = function () {
 
                     if (dx && dy) {
 
-                        //TODO when importing actual images, change getGridTileCenterPoint function to getGridTilePoint
                         var bombCoords = getGridTilePoint(getGridPosition(myGameArea.players[0], myGameArea), myGameArea.xTiles, myGameArea.yTiles, myGameArea.gridWidth, myGameArea.gridHeight)
                         myGameArea.players[0].plantBomb(bombCoords[0], bombCoords[1]);
                     }
@@ -344,12 +343,26 @@ window.onload = function () {
 
         player.x += player.speedX
         player.y += player.speedY
+        if(player.speedX>0){
+            player.direction = 4
+        }
+        else if (player.speedX<0){
+            player.direction = 2
+        }
+        else if (player.speedY>0){
+            player.direction = 1
+        }
+        else if (player.speedY<0){
+            player.direction = 3
+        }
+        else player.direction = 0
+
     }
 
     function crashWithRectangele(player, otherobj) {
-        var mytop = player.y + player.speedY;
+        var mytop = (player.y + player.speedY) +player.height/2;
         var mybottom = player.y + player.speedY + (player.height);
-        var myleft = player.x + player.speedX;
+        var myleft = (player.x + player.speedX) +player.width/2;
         var myright = player.x + player.speedX + (player.width);
         var othertop = otherobj.y;
         var otherbottom = otherobj.y + (otherobj.height);
