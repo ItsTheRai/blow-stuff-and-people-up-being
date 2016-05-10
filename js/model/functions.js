@@ -39,15 +39,15 @@ function getGridTilePoint(number, xTiles, yTiles, width, height) {
 function getGridPosition(object, myGameArea) {
     gridWidth = myGameArea.gridSize.w
     gridHeight = myGameArea.gridSize.h
-    var centerX = object.x + object.width/2
-    var centerY = object.y + object.height/2
+    var centerX = object.x + object.size.w/2
+    var centerY = object.y + object.size.h/2
     return Math.floor(centerX / gridWidth) + Math.floor((centerY / gridHeight)) * myGameArea.xTiles
 }
 
 function getGridPlayerPosition(object, myGameArea) {
     gridWidth = myGameArea.gridSize.w
     gridHeight = myGameArea.gridSize.h
-    var centerX = object.x + object.width/2
-    var centerY = object.y + object.height
+    var centerX = object.x + object.size.w/2
+    var centerY = object.y + object.size.h/2
     return Math.floor(centerX / gridWidth) + Math.floor((centerY / gridHeight)) * myGameArea.xTiles
 }

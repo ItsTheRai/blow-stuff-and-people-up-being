@@ -11,10 +11,10 @@ function Game(canvas, difficulty, mapsize, players) {
         w: 32,
         h: 32,
     };
-    this.playerSize = {
-        w: 38,
-        h: 38,
-    };
+    //this.playerSize = {
+    //    w: 38,
+    //    h: 38,
+    //};
     this.players = players;
     this.destroyableArea = [];
     this.solidArea = [];
@@ -38,7 +38,7 @@ function Game(canvas, difficulty, mapsize, players) {
         this.powerupSound = new Sound("/pureBomberman/sound/powerUp.wav");
         this.gameloopSound = new Sound("/pureBomberman/sound/gameloop_normal.mp3");
         this.gameloopSound.setRepeat(true);
-        this.gameloopSound.play();
+        //this.gameloopSound.play();
         this.canvas.width = this.gridSize.w * this.xTiles;
         this.canvas.height = this.gridSize.h * this.yTiles;
         this.context = this.canvas.getContext("2d");
@@ -78,9 +78,18 @@ function Game(canvas, difficulty, mapsize, players) {
         }
 
         //destroyable area
-        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * 5, this.gridSize.h * 5, this.gridSize));
-        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * 5, this.gridSize.h * 7, this.gridSize));
-        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * 5, this.gridSize.h * 9, this.gridSize));
+        //this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * 5, this.gridSize.h * 5, this.gridSize));
+        //this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * 5, this.gridSize.h * 7, this.gridSize));
+        //this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * 5, this.gridSize.h * 9, this.gridSize));
+
+        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * (this.xTiles-5), this.gridSize.h * (this.yTiles-5), this.gridSize));
+        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * (this.xTiles-5), this.gridSize.h * (this.yTiles-4), this.gridSize));
+        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * (this.xTiles-5), this.gridSize.h * (this.yTiles-3), this.gridSize));
+        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * (this.xTiles-5), this.gridSize.h * (this.yTiles-2), this.gridSize));
+        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * (this.xTiles-4), this.gridSize.h * (this.yTiles-5), this.gridSize));
+        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * (this.xTiles-3), this.gridSize.h * (this.yTiles-5), this.gridSize));
+        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * (this.xTiles-2), this.gridSize.h * (this.yTiles-5), this.gridSize));
+
     }
 
         this.stop = function () {

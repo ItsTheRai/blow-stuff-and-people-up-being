@@ -7,7 +7,6 @@ function Player(cnt, id, x, y, size) {
     this.alive = true;
     this.speedX = 0;
     this.speedY = 0;
-    this.PCmode = true;
     this.id = id;
     this.location = {
         x: x,
@@ -19,13 +18,10 @@ function Player(cnt, id, x, y, size) {
         w: size.w,
         h: size.h,
     }
-
-    //this.width = width;
-    //this.height = height;
     this.context = cnt;
     this.bombs = [];
     this.health = 100;
-    this.speed = 3;
+    this.speed = 1;
     this.power = 1;
     this.ammoType = 0;
     this.maxbombs = 1;
@@ -56,7 +52,7 @@ function Player(cnt, id, x, y, size) {
 
     this.addPerk = function (perk) {
         if (perk.perkNumber == 0) {
-            this.speed += 1;
+            this.speed += 0.5;
         }
         else if (perk.perkNumber == 1) {
             this.maxbombs += 1;
@@ -93,7 +89,7 @@ function Bot(cnt, id, x, y, size, difficulty) {
     this.context = cnt;
     this.bombs = [];
     this.health = 100;
-    this.speed = 3;
+    this.speed = 1;
     this.power = 1;
     this.ammoType = 0;
     this.maxbombs = 1;
@@ -124,7 +120,7 @@ function Bot(cnt, id, x, y, size, difficulty) {
 
     this.addPerk = function (perk) {
         if (perk.perkNumber == 0) {
-            this.speed += 1;
+            this.speed += 0.5;
         }
         else if (perk.perkNumber == 1) {
             this.maxbombs += 1;
