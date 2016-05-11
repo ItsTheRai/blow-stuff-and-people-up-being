@@ -2,9 +2,11 @@
  * Created by rai on 09/05/16.
  */
 function Resorces(){
-    var bombSound = ("/pureBomberman/sound/bombExplosion.wav");
-    var powerupSound =("/pureBomberman/sound/powerUp.wav");
-    var gameloopSound =("/pureBomberman/sound/gameloop_normal.mp3");
+    this.load = function(){
+        this.bombSound = ("/pureBomberman/sound/bombExplosion.wav");
+        this.powerupSound =("/pureBomberman/sound/powerUp.wav");
+        this.gameloopSound =("/pureBomberman/sound/gameloop_normal.mp3");
+    }
 
 
     this.getBombSound = function(){

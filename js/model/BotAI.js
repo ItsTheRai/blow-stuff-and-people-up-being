@@ -31,16 +31,10 @@ function BotAI(player, difficulty) {
 
     this.getNewTarget = function (game) {
 
-        //this.targets.push(game.players[0]);
     }
 
-    //getGridPosition(this.game.players[x], this.game) ==
-    //getGridPosition(bombb.fire[q], this.game))
     this.getNearDestroyableObject = function(game) {
-        //console.log("step", game.destroyableArea.length)
         for (var i = 0; i < game.destroyableArea.length; i++) {
-            //console.log("count");
-            //console.log(getGridPlayerPosition(this.player, game), getGridPosition(game.destroyableArea[i], game))
             if(getGridPlayerPosition(this.player, game)%game.xTiles==0){
                 if ((getGridPlayerPosition(this.player, game)+game.xTiles == getGridPosition(game.destroyableArea[i], game))||
                     (getGridPlayerPosition(this.player, game)-game.xTiles == getGridPosition(game.destroyableArea[i], game))||
@@ -73,7 +67,6 @@ function BotAI(player, difficulty) {
         var speedY = 0;
         for (var i = 0; i < game.players.length; i++) {
             for (var j = 0; j < game.players[i].bombs.length; j++) {
-                //console.log(this.player.x - game.players[i].bombs[j].x, this.player.y - game.players[i].bombs[j].y, game.players[i].bombs[j].power * game.gridSize.w)
                 if ((Math.abs(this.player.x - game.players[i].bombs[j].x) < game.players[i].bombs[j].power * game.gridSize.w * 2.5) &&
                     (Math.abs(this.player.y - game.players[i].bombs[j].y) < game.players[i].bombs[j].power * game.gridSize.h * 2.5)) {
                     this.running = true;
@@ -92,7 +85,6 @@ function BotAI(player, difficulty) {
                 }
             }
         }
-        //console.log(this.player)
 
 
         var result = []
@@ -118,12 +110,8 @@ function BotAI(player, difficulty) {
             result.push(speedY);
         }
 
-        //console.log(this.player.size)
         //plant bomb if near target
-        //console.log(this.getNearDestroyableObject(game))
         if(this.getNearDestroyableObject(game)){
-            //console.log("boom")
-
             result.push(true);
         }
 
@@ -131,7 +119,6 @@ function BotAI(player, difficulty) {
             result.push(true);
         }
         else result.push(false);
-        console.log(result)
         return result;
     }
 

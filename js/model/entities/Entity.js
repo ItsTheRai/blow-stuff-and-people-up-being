@@ -172,14 +172,7 @@ function Animation(context, spritesheet, frameSpeed, startFrame, endFrame) {
     for (var frameNumber = startFrame; frameNumber <= endFrame; frameNumber++)
         this.animationSequence.push(frameNumber);
 
-    // Update the animation
-    this.update = function () {
-        // update to the next frame if it is time
-        if (this.counter == (this.frameSpeed - 1))
-            this.currentFrame = (this.currentFrame + 1) % this.animationSequence.length;
-        // update the counter
-        this.counter = (this.counter + 1) % this.frameSpeed;
-    }
+
 }
 
 
@@ -200,7 +193,6 @@ function Fire(cnt, id, x, y, size) {
     this.sprite = new Animation(this.context, ss, 120, 0, 5);
 
     this.update = function () {
-        this.sprite.update();
     }
 }
 
@@ -219,7 +211,6 @@ function SolidArea(cnt, id, x, y, size) {
     //draw the object
     var ss = new SpriteSheet('/pureBomberman/media/tile_wall.png', 32, 32);
     this.sprite = new Animation(this.context, ss, 60, 0, 0);
-    this.sprite.update();
 }
 
 function Tile(cnt, id, x, y, size) {
@@ -260,7 +251,6 @@ function DestroyableArea(cnt, id, x, y, size) {
     //draw the object
     var ss = new SpriteSheet('/pureBomberman/media/tile_wood.png', 32, 32);
     this.sprite = new Animation(this.context, ss, 60, 0, 0);
-    this.sprite.update();
 
     this.explode = function () {
         var self = this;
@@ -309,7 +299,6 @@ function Bomb(cnt, id, player, x, y, size, power) {
     this.update = function () {
         if (this.timer >= 0) {
             this.timer -= 10
-            this.sprite.update()
         }
     }
 

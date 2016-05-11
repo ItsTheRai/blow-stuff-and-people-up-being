@@ -3,25 +3,25 @@
  */
 //init variables
 //init game canvas object
-function Game(canvas, difficulty, mapsize, players) {
-    this.mapsize = mapsize;
-    this.xTiles = this.mapsize.xTiles;
-    this.yTiles = this.mapsize.yTiles;
+function Game(canvas, difficulty) {
+    this.mapsize;// = mapsize;
+    this.xTiles;// = this.mapsize.xTiles;
+    this.yTiles;// = this.mapsize.yTiles;
     this.gridSize = {
         w: 32,
         h: 32,
     };
-    //this.playerSize = {
-    //    w: 38,
-    //    h: 38,
-    //};
-    this.players = players;
+    this.playerSize = {
+        w: 38,
+        h: 38,
+    };
+    this.players = [];// = players;
     this.destroyableArea = [];
     this.solidArea = [];
     this.tiles = [];
     this.perks = [];
     //set up initial configuration
-    this.moveSize = 2;   //number of pixels an object is moved by by a single press of a button
+    this.moveSize = 1;   //number of pixels an object is moved by by a single press of a button
     this.id = 0;
     //get canvas
     this.canvas = canvas;
@@ -29,8 +29,28 @@ function Game(canvas, difficulty, mapsize, players) {
     this.powerupSound = null;
     this.gameloopSound = null;
     this.gameRunning = false;
+    this.playerCount;
+    this.gameSize;
 
-    this.initGame = function () {
+    this.context = this.canvas.getContext("2d");
+
+    console.log("aa", this.canvas.width)
+    this.setPlayerCount = function(count){
+        this.playerCount=count;
+    }
+    this.setGameSize = function(size){
+        this.gameSize=size;
+        if(size==1||size==2){
+            this.xTiles=20;
+            this.yTiles=15;
+        }
+        if(size==3){
+            this.xTiles=38;
+            this.yTiles=20;
+        }
+    }
+
+    this.init = function () {
         //set flag
         this.gameRunning = true;
         //load sounds
@@ -41,9 +61,12 @@ function Game(canvas, difficulty, mapsize, players) {
         //this.gameloopSound.play();
         this.canvas.width = this.gridSize.w * this.xTiles;
         this.canvas.height = this.gridSize.h * this.yTiles;
-        this.context = this.canvas.getContext("2d");
 
-        //this.players.push(player2)
+
+        //init map
+
+
+
         //create grid border
         //paint in grid
         for (var i = 0; i < this.xTiles; i++) {
@@ -89,6 +112,33 @@ function Game(canvas, difficulty, mapsize, players) {
         this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * (this.xTiles-4), this.gridSize.h * (this.yTiles-5), this.gridSize));
         this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * (this.xTiles-3), this.gridSize.h * (this.yTiles-5), this.gridSize));
         this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * (this.xTiles-2), this.gridSize.h * (this.yTiles-5), this.gridSize));
+
+
+        //init players
+        var player0 = new Player(this.context, this.id++, 50, 50, this.playerSize);
+        this.players.push(player0)
+        if(this.gameSize==1){
+            var player1 = new Bot(this.context, this.id++, (this.xTiles-1)*this.gridSize.w,(this.yTiles-1)*this.gridSize.h , this.playerSize);
+            this.players.push(player1)
+        }
+        else if(this.gameSize==2){
+            var player1 = new Player(context, this.id++, (this.xTiles-1)*this.gridSize.w,(this.yTiles-1)*this.gridSize.h , this.playerSize , 0);
+            this.players.push(player1)
+        }
+
+        //add bots if necassary
+        if(this.gameSize==1){}
+        else if (this.gameSize==2){
+            var player3 = new Player(context, this.id++, (1)*this.gridSize.w,(this.yTiles-1)*this.gridSize.h , this.playerSize , 0);
+            this.players.push(player1)
+            var player4 = new Player(context, this.id++, (this.xTiles-1)*this.gridSize.w,(1)*this.gridSize.h , this.playerSize , 0);
+            this.players.push(player1)
+        }
+
+        else if(this.gameSize==3){
+            //TODO add bare people
+        }
+
 
     }
 

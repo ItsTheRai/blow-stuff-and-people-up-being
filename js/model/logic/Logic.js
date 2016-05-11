@@ -6,8 +6,12 @@
  */
 function Logic(game) {
     this.game = game;
+
+    this.init = function(){
+        game.init();
+    }
+
     this.updateMovement = function (input) {
-        console.log(this.game.players[0].x, this.game.players[0].y)
         //left
         if (input[37]) {
             game.players[0].speedX += -1;
@@ -57,6 +61,16 @@ function Logic(game) {
     }
 
 
+
+    // Update the animation
+    this.updateAnimationCounter = function (animation) {
+        // update to the next frame if it is time
+        if (animation.counter == (animation.frameSpeed - 1))
+            animation.currentFrame = (animation.currentFrame + 1) % animation.animationSequence.length;
+        // update the counter
+        animation.counter = (animation.counter + 1) % animation.frameSpeed;
+    }
+
     this.updateGameStep = function () {
         if (!this.game.gameRunning) {
             this.game.gameloopSound.stop();
@@ -67,11 +81,8 @@ function Logic(game) {
                 if (this.game.players[i] instanceof Bot) {
                     //get bot moves
                     //var nextMove = this.getNextMove(this.game.players[i]);
-                    //console.log(this.game.players[i].botAI);
                     var nextMove = this.game.players[i].botAI.getNextMove(this.game);
-                    //console.log(nextMove);
                     this.game.players[i].speedX = nextMove[0];
-                    //this.game.players[i].spedX = nextMove[0];
                     this.game.players[i].speedY = nextMove[1];
                     if (nextMove[2]) {
                         var c = getGridPlayerPosition(this.game.players[i], this.game);
@@ -90,6 +101,8 @@ function Logic(game) {
                 }
                 //check for collisions
                 this.checkForCollisions(this.game.players[i], this.game);
+                //update player animation
+                this.updateAnimationCounter(this.game.players[i].animations[this.game.players[i].direction]);
             }
         }
 
@@ -102,6 +115,8 @@ function Logic(game) {
             else if (desArea.exploded) {
                 this.game.destroyableArea.splice(this.game.destroyableArea.indexOf(desArea), 1);
             }
+            //update destroyable are animation
+            this.updateAnimationCounter(this.game.destroyableArea[i].sprite);
         }
 
         //check for all bombs and damage to players and surronding
@@ -166,6 +181,7 @@ function Logic(game) {
                         }
                     }
                 }
+                this.updateAnimationCounter(this.game.players[i].bombs[j].sprite);
             }
         }
     }
@@ -173,7 +189,6 @@ function Logic(game) {
 
     this.checkForCollisions = function (player) {
         if (player.id === 0) {
-            //console.log(player.direction)
         }
         //check for collisions here
         var moveX = true;
