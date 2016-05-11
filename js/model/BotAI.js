@@ -2,13 +2,14 @@
  * Created by rai on 08/05/16.
  */
 function BotAI(player, difficulty) {
-    //this.game = game;
+    this.game;
     this.player = player;
     this.difficulty = difficulty;
     //stack of targets
     this.targets = [];
     this.running = false;
     this.init = function (game){
+        this.game = game;
         for(var i=0; i < game.players.length; i++){
             if(this.player.id!=game.players[i].id) {
                 this.targets.push(game.players[i]);

@@ -16,7 +16,7 @@ function SecondMenu(service) {
 
 //
         var self = this;
-        elem.addEventListener('click', function (event) {
+        elem.addEventListener('click', function screen1(event) {
             var x = event.pageX - elemLeft,
                 y = event.pageY - elemTop;
 
@@ -25,18 +25,25 @@ function SecondMenu(service) {
                 if (y > elements[i].top && y < elements[i].top + elements[i].height
                     && x > elements[i].left && x < elements[i].left + elements[i].width) {
                     if(i==0){
+                        elem.removeEventListener("click", screen1,false);
+                        console.log("1")
                         service.logic.game.setPlayerCount(1)
                         self.changeView(context, service);
-                        this.currentView=1;
+                        self.currentView=1;
                         //redirect
                     }
                     else if(i==1){
-                        service.logic.game.setPlayerCount(2)
+                        elem.removeEventListener("click", screen1,false);
+                        console.log("2 players")
+                        service.logic.game.setPlayerCount(2);
+                        console.log(service.logic.game.playerCount)
                         self.changeView(context, service);
-                        this.currentView=1;
+                        self.currentView=1;
                     }
                     else if(i==2){
-                        this.currentView=4;
+                        elem.removeEventListener("click", screen1,false);
+                        console.log("instructions")
+                        self.currentView=4;
                         self.changeView(context, service);
                     }
                 }
@@ -93,6 +100,8 @@ function SecondMenu(service) {
 
 
     this.changeView = function (context, service) {
+        console.log(service.logic.game.playerCount)
+
         var elem = context.canvas,
             elemLeft = elem.offsetLeft,
             elemTop = elem.offsetTop,
@@ -105,28 +114,34 @@ function SecondMenu(service) {
             var x = event.pageX - elemLeft,
                 y = event.pageY - elemTop;
 
+            console.log(service.logic.game.playerCount)
+
             // Collision detection between clicked offset and element.
             for (var i=0;i < elements.length; i++){
                 if (y > elements[i].top && y < elements[i].top + elements[i].height
                     && x > elements[i].left && x < elements[i].left + elements[i].width) {
                     if(i==0){
-                        alert('1');
-                        this.currentView=2;
-                        service.logic.game.setGameSize(1)
+                        console.log(0);
+                        //alert('1');
+                        console.log()
+                        self.currentView=2;
+                        service.logic.game.setGameSize(2)
                         self.startGame();
                         //redirect
                     }
                     else if(i==1){
-                        this.currentView=2;
-                        service.logic.game.setGameSize(2)
+                        console.log("1")
+                        self.currentView=2;
+                        service.logic.game.setGameSize(4)
                         //redirect
-                        alert('2');
+                        //alert('2');
                         self.startGame();
                     }
                     else if(i==2){
-                        this.currentView=2;
-                        service.logic.game.setGameSize(1)
-                        alert('3');
+                        console.log("2")
+                        self.currentView=2;
+                        service.logic.game.setGameSize(20)
+                        //alert('3');
                         self.startGame();
                     }
                 }
@@ -176,6 +191,58 @@ function SecondMenu(service) {
             context.fillStyle = element.fillStyle;
             //context.textAlign = "none";
             context.fillText(element.text, element.left+element.width/2, element.top+element.height/1.5);
+        });
+    }
+
+    this.showEndMenu = function (context, service) {
+        var elem = context.canvas,
+            elemLeft = elem.offsetLeft,
+            elemTop = elem.offsetTop,
+            context = elem.getContext('2d'),
+            elements = [];
+
+//
+        var self = this;
+        elem.addEventListener('click', function screen1(event) {
+            var x = event.pageX - elemLeft,
+                y = event.pageY - elemTop;
+
+            // Collision detection between clicked offset and element.
+            for (var i = 0; i < elements.length; i++) {
+                if (y > elements[i].top && y < elements[i].top + elements[i].height
+                    && x > elements[i].left && x < elements[i].left + elements[i].width) {
+                    if (i == 0) {
+                        elem.removeEventListener("click", screen1, false);
+                        self.currentView = 0;
+                        //redirect
+                    }
+                }
+            }
+        }, false);
+
+// Add element.
+        elements.push({
+            colour: '#0000aa',
+            width: 200,
+            height: 25,
+            top: 50,
+            left: 200,
+            fillStyle: "white",
+            font: "20px Arial",
+            text: "Play again"
+        });
+
+        //render elements
+        context.fillStyle = "#000000";
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height)
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        elements.forEach(function (element) {
+            context.fillStyle = element.colour;
+            context.fillRect(element.left, element.top, element.width, element.height);
+            context.font = element.font;
+            context.fillStyle = element.fillStyle;
+            //context.textAlign = "none";
+            context.fillText(element.text, element.left + element.width / 2, element.top + element.height / 1.5);
         });
     }
 

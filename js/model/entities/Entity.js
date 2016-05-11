@@ -36,6 +36,8 @@ function Player(cnt, id, x, y, size) {
     this.animations.push(new Animation(this.context, ss, 15 / this.speed, 4, 7));
     this.animations.push(new Animation(this.context, ss, 15 / this.speed, 8, 11));
     this.animations.push(new Animation(this.context, ss, 15 / this.speed, 12, 15));
+    //dead
+    this.animations.push(new Animation(this.context, ss, 15 / this.speed, 16, 16));
 
 
     this.plantBomb = function (tileX, tileY, gridSize) {
@@ -105,6 +107,7 @@ function Bot(cnt, id, x, y, size, difficulty) {
     this.animations.push(new Animation(this.context, ss, 15 / this.speed, 8, 11));
     this.animations.push(new Animation(this.context, ss, 15 / this.speed, 12, 15));
 
+    this.animations.push(new Animation(this.context, ss, 15 / this.speed, 16, 16));
 
     this.plantBomb = function (tileX, tileY, gridSize) {
         if (this.bombs.length < this.maxbombs) {
@@ -226,8 +229,8 @@ function Tile(cnt, id, x, y, size) {
     //this.height = height;
     this.context = cnt;
     //draw the object
-
-
+    var ss = new SpriteSheet('/pureBomberman/media/tile_grass.png', 32, 32);
+    this.sprite = new Animation(this.context, ss, 60, 0, 0);
 }
 
 function DestroyableArea(cnt, id, x, y, size) {

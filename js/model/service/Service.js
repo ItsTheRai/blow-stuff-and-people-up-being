@@ -14,7 +14,7 @@ function Service(logic){
 
 
     this.startGame = function(){
-
+        this.logic.init();
 
     }
 

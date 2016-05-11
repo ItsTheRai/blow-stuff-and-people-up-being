@@ -39,12 +39,13 @@ function Game(canvas, difficulty) {
         this.playerCount=count;
     }
     this.setGameSize = function(size){
+        console.log("size is ",size)
         this.gameSize=size;
-        if(size==1||size==2){
+        if(size==2||size==4){
             this.xTiles=20;
             this.yTiles=15;
         }
-        if(size==3){
+        if(size==20){
             this.xTiles=38;
             this.yTiles=20;
         }
@@ -61,6 +62,7 @@ function Game(canvas, difficulty) {
         //this.gameloopSound.play();
         this.canvas.width = this.gridSize.w * this.xTiles;
         this.canvas.height = this.gridSize.h * this.yTiles;
+        console.log("grid dims", this.gridSize.w, this.xTiles)
 
 
         //init map
@@ -115,31 +117,38 @@ function Game(canvas, difficulty) {
 
 
         //init players
-        var player0 = new Player(this.context, this.id++, 50, 50, this.playerSize);
+        var player0 = new Player(this.context, this.id++, this.gridSize.w, this.gridSize.h, this.playerSize);
         this.players.push(player0)
-        if(this.gameSize==1){
-            var player1 = new Bot(this.context, this.id++, (this.xTiles-1)*this.gridSize.w,(this.yTiles-1)*this.gridSize.h , this.playerSize);
+
+        console.log(this.playerCount, this.gameSize)
+        console.log("size", this.canvas.width)
+        if(this.playerCount==1){
+            var player1 = new Bot(this.context, this.id++, (this.xTiles-1)*this.gridSize.w-
+                this.playerSize.w,(this.yTiles-1)*this.gridSize.h-this.playerSize.h , this.playerSize, 0);
+            player1.botAI.init(this);
             this.players.push(player1)
         }
-        else if(this.gameSize==2){
-            var player1 = new Player(context, this.id++, (this.xTiles-1)*this.gridSize.w,(this.yTiles-1)*this.gridSize.h , this.playerSize , 0);
+        else if(this.playerCount==2){
+            var player1 = new Player(this.context, this.id++, (this.xTiles-1)*this.gridSize.w-
+                this.playerSize.w,(this.yTiles-1)*this.gridSize.h-this.playerSize.h , this.playerSize);
             this.players.push(player1)
         }
 
         //add bots if necassary
-        if(this.gameSize==1){}
-        else if (this.gameSize==2){
-            var player3 = new Player(context, this.id++, (1)*this.gridSize.w,(this.yTiles-1)*this.gridSize.h , this.playerSize , 0);
-            this.players.push(player1)
-            var player4 = new Player(context, this.id++, (this.xTiles-1)*this.gridSize.w,(1)*this.gridSize.h , this.playerSize , 0);
-            this.players.push(player1)
+
+        if (this.gameSize==4){
+            var player3 = new Bot(this.context, this.id++, this.gridSize.w,(this.yTiles-1)*this.gridSize.h-this.playerSize.h , this.playerSize, 0);
+            player3.botAI.init(this);
+            this.players.push(player3);
+            var player4 = new Bot(this.context, this.id++, (this.xTiles-1)*this.gridSize.w- this.playerSize.w,this.gridSize.h,
+                this.playerSize, 0);
+            player4.botAI.init(this);
+            this.players.push(player4)
         }
 
-        else if(this.gameSize==3){
+        else if(this.gameSize==20){
             //TODO add bare people
         }
-
-
     }
 
         this.stop = function () {

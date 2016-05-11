@@ -7,64 +7,74 @@ function GameView(service) {
 
     this.service = service;
 
+
     this.mainMenu;
     this.secondMenu;
+    this.endMenu
     //this.playersChosen = false;
     this.init = function(){
         this.secondMenu = new SecondMenu(this.service);
         this.secondMenu.init(this.service.logic.game.context, this.service)
+        //this.endMenu = new EndMenu(this.service);
     }
-
-
-
 
     //read inputs and update the game accordingly
     this.updateGameView = function () {
-        if(this.secondMenu.currentView==0){
+        console.log(this.secondMenu.currentView)
+        console.log("running", this.service.logic.game.gameRunning)
+        if (this.secondMenu.currentView == 0) {
             return;
         }
-        else if(this.secondMenu.currentView==1){
+        else if (this.secondMenu.currentView == 1) {
             return;
         }
 
-        else if(this.secondMenu.currentView==2 && this.service.logic.game.running) {
-            //clear canvas
-            this.clear(this.service.logic.game.context)
-            //redraw all tiles
-            for (var i = 0; i < this.service.logic.game.tiles.length; i++) {
-                this.updateTileView(this.service.logic.game.context, this.service.logic.game.tiles[i])
-            }
-            //redraw perks
-            for (var i = 0; i < this.service.logic.game.perks.length; i++) {
-                this.updateObjectView(this.service.logic.game.context, this.service.logic.game.perks[i])
-            }
-            //update bombs and fire
-            for (var i = 0; i < this.service.logic.game.players.length; i++) {
-                for (var j = 0; j < this.service.logic.game.players[i].bombs.length; j++) {
-                    var bomb = this.service.logic.game.players[i].bombs[j]
-                    this.updateObjectView(this.service.logic.game.context, bomb)
-                    for (var q = 0; q < bomb.fire.length; q++) {
-                        if (bomb.fire[q] != null) {
-                            this.updateObjectView(this.service.logic.game.context, bomb.fire[q])
+        else if (this.secondMenu.currentView == 3) {
+
+            this.secondMenu.showEndMenu(this.service.logic.game.context, this.service);
+        }
+
+        else if (this.secondMenu.currentView == 2) {
+            if (this.service.logic.game.gameRunning) {
+                console.log("running");
+                //clear canvas
+                this.clear(this.service.logic.game.context)
+                //redraw all tiles
+                for (var i = 0; i < this.service.logic.game.tiles.length; i++) {
+                    this.updateObjectView(this.service.logic.game.context, this.service.logic.game.tiles[i])
+                }
+                //redraw perks
+                for (var i = 0; i < this.service.logic.game.perks.length; i++) {
+                    this.updateObjectView(this.service.logic.game.context, this.service.logic.game.perks[i])
+                }
+                //update bombs and fire
+                for (var i = 0; i < this.service.logic.game.players.length; i++) {
+                    for (var j = 0; j < this.service.logic.game.players[i].bombs.length; j++) {
+                        var bomb = this.service.logic.game.players[i].bombs[j]
+                        this.updateObjectView(this.service.logic.game.context, bomb)
+                        for (var q = 0; q < bomb.fire.length; q++) {
+                            if (bomb.fire[q] != null) {
+                                this.updateObjectView(this.service.logic.game.context, bomb.fire[q])
+                            }
                         }
                     }
                 }
+                //redraw all solid objects
+                for (var i = 0; i < this.service.logic.game.solidArea.length; i++) {
+                    this.updateObjectView(this.service.logic.game.context, this.service.logic.game.solidArea[i])
+                }
+                //redraw boxes
+                for (var i = 0; i < this.service.logic.game.destroyableArea.length; i++) {
+                    this.updateObjectView(this.service.logic.game.context, this.service.logic.game.destroyableArea[i])
+                }
+                //redraw players
+                for (var i = 0; i < this.service.logic.game.players.length; i++) {
+                    this.updatePlayerView(this.service.logic.game.context, this.service.logic.game.players[i])
+                }
             }
-            //redraw all solid objects
-            for (var i = 0; i < this.service.logic.game.solidArea.length; i++) {
-                this.updateObjectView(this.service.logic.game.context, this.service.logic.game.solidArea[i])
+            else {
+                this.secondMenu.currentView=3;
             }
-            //redraw boxes
-            for (var i = 0; i < this.service.logic.game.destroyableArea.length; i++) {
-                this.updateObjectView(this.service.logic.game.context, this.service.logic.game.destroyableArea[i])
-            }
-            //redraw players
-            for (var i = 0; i < this.service.logic.game.players.length; i++) {
-                this.updatePlayerView(this.service.logic.game.context, this.service.logic.game.players[i])
-            }
-        }
-        else{
-
         }
     }
 
@@ -109,6 +119,7 @@ function GameView(service) {
     }
 
     this.clear = function (context) {
+        context.fillStyle = "#0000ff";
         context.clearRect(0, 0, context.canvas.width, context.canvas.height)
     }
 }

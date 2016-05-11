@@ -43,21 +43,21 @@ function Logic(game) {
         //////////////////////////////////////////////
         //player 2
 
-        //if (myGameArea.keys && myGameArea.keys[65]) {
-        //    myGameArea.players[1].speedX += -1;
-        //}
-        ////d
-        //if (myGameArea.keys && myGameArea.keys[68]) {
-        //    myGameArea.players[1].speedX += 1;
-        //}
-        ////w
-        //if (myGameArea.keys && myGameArea.keys[87]) {
-        //    myGameArea.players[1].speedY += -1;
-        //}
-        ////s
-        //if (myGameArea.keys && myGameArea.keys[83]) {
-        //    myGameArea.players[1].speedY += 1;
-        //}
+        if (input[65]) {
+            game.players[1].speedX += -1;
+        }
+        //d
+        if (input[68]) {
+            game.players[1].speedX += 1;
+        }
+        //w
+        if (input[87]) {
+            game.players[1].speedY += -1;
+        }
+        //s
+        if (input[83]) {
+            game.players[1].speedY += 1;
+        }
     }
 
 
@@ -72,116 +72,130 @@ function Logic(game) {
     }
 
     this.updateGameStep = function () {
-        if (!this.game.gameRunning) {
-            this.game.gameloopSound.stop();
-        }
+        //if (!this.game.gameRunning) {
+        //    this.game.gameloopSound.stop();
+        //}
 
-        for (var i = 0; i < this.game.players.length; i++) {
-            if (this.game.players[i].alive) {
-                if (this.game.players[i] instanceof Bot) {
-                    //get bot moves
-                    //var nextMove = this.getNextMove(this.game.players[i]);
-                    var nextMove = this.game.players[i].botAI.getNextMove(this.game);
-                    this.game.players[i].speedX = nextMove[0];
-                    this.game.players[i].speedY = nextMove[1];
-                    if (nextMove[2]) {
-                        var c = getGridPlayerPosition(this.game.players[i], this.game);
-                        var bombCoords = getGridTilePoint(c, this.game.xTiles, this.game.yTiles, this.game.gridSize.w,
-                            this.game.gridSize.h);
-                        this.game.players[i].plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
+        if(this.game.gameRunning) {
+            for (var i = 0; i < this.game.players.length; i++) {
+                if (this.game.players[i].alive) {
+                    if (this.game.players[i] instanceof Bot) {
+                        //get bot moves
+                        //var nextMove = this.getNextMove(this.game.players[i]);
+                        var nextMove = this.game.players[i].botAI.getNextMove(this.game);
+                        this.game.players[i].speedX = nextMove[0];
+                        this.game.players[i].speedY = nextMove[1];
+                        if (nextMove[2]) {
+                            var c = getGridPlayerPosition(this.game.players[i], this.game);
+                            var bombCoords = getGridTilePoint(c, this.game.xTiles, this.game.yTiles, this.game.gridSize.w,
+                                this.game.gridSize.h);
+                            this.game.players[i].plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
+                        }
                     }
+                    //calculate potential movement direction and adjust for lateral lines
+                    // if movement is lateral, sqrt the value
+                    var total = Math.abs(this.game.players[i].speedX) + Math.abs(this.game.players[i].speedY);
+                    if (total != 0) {
+                        var scalar = Math.sqrt(total) / total;
+                        this.game.players[i].speedX *= (this.game.moveSize * scalar) * this.game.players[i].speed;
+                        this.game.players[i].speedY *= (this.game.moveSize * scalar) * this.game.players[i].speed;
+                    }
+                    //check for collisions
+                    this.checkForCollisions(this.game.players[i], this.game);
+                    //update player animation
+                    this.updateAnimationCounter(this.game.players[i].animations[this.game.players[i].direction]);
                 }
-                //calculate potential movement direction and adjust for lateral lines
-                // if movement is lateral, sqrt the value
-                var total = Math.abs(this.game.players[i].speedX) + Math.abs(this.game.players[i].speedY);
-                if (total != 0) {
-                    var scalar = Math.sqrt(total) / total;
-                    this.game.players[i].speedX *= (this.game.moveSize * scalar) * this.game.players[i].speed;
-                    this.game.players[i].speedY *= (this.game.moveSize * scalar) * this.game.players[i].speed;
-                }
-                //check for collisions
-                this.checkForCollisions(this.game.players[i], this.game);
-                //update player animation
-                this.updateAnimationCounter(this.game.players[i].animations[this.game.players[i].direction]);
             }
-        }
 
-        //check if boxes have been destroyed
-        for (var i = 0; i < this.game.destroyableArea.length; i++) {
-            var desArea = this.game.destroyableArea[i];
-            if (desArea.triggered && !desArea.exploding) {
-                desArea.explode();
-            }
-            else if (desArea.exploded) {
-                this.game.destroyableArea.splice(this.game.destroyableArea.indexOf(desArea), 1);
-            }
-            //update destroyable are animation
-            this.updateAnimationCounter(this.game.destroyableArea[i].sprite);
-        }
-
-        //check for all bombs and damage to players and surronding
-        for (var i = 0; i < this.game.players.length; i++) {
-            for (var j = 0; j < this.game.players[i].bombs.length; j++) {
-                var bombb = this.game.players[i].bombs[j];
-                bombb.update();
-                if (bombb.timer <= 0 && !bombb.exploding) {
-                    bombb.explode();
-                    this.game.bombSound.play();
+            //check if boxes have been destroyed
+            for (var i = 0; i < this.game.destroyableArea.length; i++) {
+                var desArea = this.game.destroyableArea[i];
+                if (desArea.triggered && !desArea.exploding) {
+                    desArea.explode();
                 }
-                //TODO restore this
-                else if (bombb.exploded) {
-                    this.game.players[i].bombs.splice(this.game.players[i].bombs.indexOf(bombb), 1);
+                else if (desArea.exploded) {
+                    this.game.destroyableArea.splice(this.game.destroyableArea.indexOf(desArea), 1);
                 }
-                //login here to injure player/destroy wall
-                else if (bombb.exploding) {
-                    for (var q = 0; q < bombb.fire.length; q++) {
-                        if (bombb.fire[q] != null) {
-                            //bombb.fire[q].update()
-                            removeFlag = false;
-                            for (var x = 0; x < this.game.players.length; x++) {
-                                if (getGridPosition(this.game.players[x], this.game) ==
-                                    getGridPosition(bombb.fire[q], this.game)) {
-                                    //window.alert("you died")
-                                    //TODO restore this if
-                                    //this.game.players[x].alive = false
-                                    //flag for removal of objects
-                                    removeFlag = true;
-                                }
-                            }
+                //update destroyable are animation
+                this.updateAnimationCounter(this.game.destroyableArea[i].sprite);
+            }
 
-                            for (var x = 0; x < this.game.destroyableArea.length; x++) {
-                                if (!this.game.destroyableArea[x].triggered &&
-                                    getGridPosition(this.game.destroyableArea[x], this.game) ==
-                                    getGridPosition(bombb.fire[q], this.game)) {
-                                    this.game.destroyableArea[x].triggered = true;
-                                    //random perk
-                                    var rand = Math.floor(Math.random() * 3);
-                                    //odds of getting a perk
-                                    var perkOdds = Math.random();
-                                    if (perkOdds < 0.3) {
-                                        this.game.perks.push(new Perk(this.game.destroyableArea[x].x,
-                                            this.game.destroyableArea[x].y, this.game.context, this.game.gridSize, rand));
+            //check for all bombs and damage to players and surronding
+            for (var i = 0; i < this.game.players.length; i++) {
+                for (var j = 0; j < this.game.players[i].bombs.length; j++) {
+                    var bombb = this.game.players[i].bombs[j];
+                    bombb.update();
+                    if (bombb.timer <= 0 && !bombb.exploding) {
+                        bombb.explode();
+                        this.game.bombSound.play();
+                    }
+                    //TODO restore this
+                    else if (bombb.exploded) {
+                        this.game.players[i].bombs.splice(this.game.players[i].bombs.indexOf(bombb), 1);
+                    }
+                    //login here to injure player/destroy wall
+                    else if (bombb.exploding) {
+                        for (var q = 0; q < bombb.fire.length; q++) {
+                            if (bombb.fire[q] != null) {
+                                //bombb.fire[q].update()
+                                removeFlag = false;
+                                for (var x = 0; x < this.game.players.length; x++) {
+                                    if (getGridPosition(this.game.players[x], this.game) ==
+                                        getGridPosition(bombb.fire[q], this.game)) {
+                                        //window.alert("you died")
+                                        //TODO restore this if
+                                        this.game.players[x].alive = false
+                                        this.game.players[x].direction = 5;
+                                        //flag for removal of objects
+                                        removeFlag = true;
                                     }
-                                    removeFlag = true;
                                 }
-                            }
 
-                            for (var x = 0; x < this.game.solidArea.length; x++) {
-                                if (getGridPosition(this.game.solidArea[x], this.game) ==
-                                    getGridPosition(bombb.fire[q], this.game)) {
-                                    removeFlag = true;
+                                for (var x = 0; x < this.game.destroyableArea.length; x++) {
+                                    if (!this.game.destroyableArea[x].triggered &&
+                                        getGridPosition(this.game.destroyableArea[x], this.game) ==
+                                        getGridPosition(bombb.fire[q], this.game)) {
+                                        this.game.destroyableArea[x].triggered = true;
+                                        //random perk
+                                        var rand = Math.floor(Math.random() * 3);
+                                        //odds of getting a perk
+                                        var perkOdds = Math.random();
+                                        if (perkOdds < 0.3) {
+                                            this.game.perks.push(new Perk(this.game.destroyableArea[x].x,
+                                                this.game.destroyableArea[x].y, this.game.context, this.game.gridSize, rand));
+                                        }
+                                        removeFlag = true;
+                                    }
                                 }
-                            }
 
-                            if (removeFlag) {
-                                //set to null to keep positioning of all fires
-                                bombb.fire[q] = null;
-                                //bombb.fire.splice(bombb.fire.indexOf(bombb.fire[q]), 1)
+                                for (var x = 0; x < this.game.solidArea.length; x++) {
+                                    if (getGridPosition(this.game.solidArea[x], this.game) ==
+                                        getGridPosition(bombb.fire[q], this.game)) {
+                                        removeFlag = true;
+                                    }
+                                }
+
+                                if (removeFlag) {
+                                    //set to null to keep positioning of all fires
+                                    bombb.fire[q] = null;
+                                    //bombb.fire.splice(bombb.fire.indexOf(bombb.fire[q]), 1)
+                                }
                             }
                         }
                     }
+                    this.updateAnimationCounter(this.game.players[i].bombs[j].sprite);
                 }
-                this.updateAnimationCounter(this.game.players[i].bombs[j].sprite);
+            }
+            //check if anyone still alive
+            var counter = 0;
+            for (var i = 0; i < this.game.players.length; i++) {
+                if (this.game.players[i].alive == true) {
+                    counter++;
+                }
+            }
+            console.log("counter", counter)
+            if (counter <= 1) {
+                this.game.gameRunning = false;
             }
         }
     }
