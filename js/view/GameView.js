@@ -3,80 +3,116 @@
  */
 function GameView(service) {
 
+    this.canvas = document.getElementById("mycanvas");
+    this.canvas.width = 600;
+    this.canvas.height = 300;
+    this.context = this.canvas.getContext("2d");
+    this.initGame = false;
+    //this.context =
     this.views = [];
-
     this.service = service;
-
-
-    this.mainMenu;
     this.secondMenu;
-    this.endMenu
+
+    //this.endMenu
     //this.playersChosen = false;
-    this.init = function(){
-        this.secondMenu = new SecondMenu(this.service);
-        this.secondMenu.init(this.service.logic.game.context, this.service)
-        //this.endMenu = new EndMenu(this.service);
+    this.currentView;
+
+    this.start = function () {
+        this.secondMenu = new SecondMenu();
+        this.secondMenu.currentView = 1;
+    }
+
+    this.resetGame = function () {
+        console.log("resetting game");
+        this.service.logic.game = new Game(this.canvas);
     }
 
     //read inputs and update the game accordingly
     this.updateGameView = function () {
-        console.log(this.secondMenu.currentView)
-        console.log("running", this.service.logic.game.gameRunning)
-        if (this.secondMenu.currentView == 0) {
+        if (this.secondMenu.currentView == 1) {
+            if (this.secondMenu.view1visible) {
+                return;
+            }
+            else {
+                this.resetGame();
+                this.secondMenu.init(this.context, this.service);
+            }
             return;
         }
-        else if (this.secondMenu.currentView == 1) {
+        else if (this.secondMenu.currentView == 2) {
+            if (this.secondMenu.view2visible) {
+                return;
+            }
+            else {
+                this.secondMenu.changeView(this.context, this.service)
+            }
+            return;
+        }
+
+        else if (this.secondMenu.currentView == 4) {
+            if (this.secondMenu.view4visible) {
+                return
+            }
+            else {
+                console.log("ending ti")
+                this.secondMenu.showEndMenu(this.context, this.service)
+            }
             return;
         }
 
         else if (this.secondMenu.currentView == 3) {
-
-            this.secondMenu.showEndMenu(this.service.logic.game.context, this.service);
-        }
-
-        else if (this.secondMenu.currentView == 2) {
-            if (this.service.logic.game.gameRunning) {
-                console.log("running");
+            if (this.secondMenu.initGame && !this.service.logic.game.gameRunning) {
+                console.log("init new game")
+                this.service.logic.game.init();
+                this.secondMenu.initGame = false;
+            }
+            else if (!this.secondMenu.initGame && !this.service.logic.game.gameRunning) {
+                this.secondMenu.showEndMenu(this.context, this.service);
+            }
+            else if (this.service.logic.game.gameRunning) {
                 //clear canvas
-                this.clear(this.service.logic.game.context)
+                this.clear(this.context)
                 //redraw all tiles
                 for (var i = 0; i < this.service.logic.game.tiles.length; i++) {
-                    this.updateObjectView(this.service.logic.game.context, this.service.logic.game.tiles[i])
+                    this.updateObjectView(this.context, this.service.logic.game.tiles[i])
                 }
                 //redraw perks
                 for (var i = 0; i < this.service.logic.game.perks.length; i++) {
-                    this.updateObjectView(this.service.logic.game.context, this.service.logic.game.perks[i])
+                    this.updateObjectView(this.context, this.service.logic.game.perks[i])
                 }
                 //update bombs and fire
                 for (var i = 0; i < this.service.logic.game.players.length; i++) {
                     for (var j = 0; j < this.service.logic.game.players[i].bombs.length; j++) {
                         var bomb = this.service.logic.game.players[i].bombs[j]
-                        this.updateObjectView(this.service.logic.game.context, bomb)
+                        if (!bomb.exploding) {
+                            this.updateObjectView(this.context, bomb)
+                        }
                         for (var q = 0; q < bomb.fire.length; q++) {
                             if (bomb.fire[q] != null) {
-                                this.updateObjectView(this.service.logic.game.context, bomb.fire[q])
+                                this.updateObjectView(this.context, bomb.fire[q])
                             }
                         }
                     }
                 }
                 //redraw all solid objects
                 for (var i = 0; i < this.service.logic.game.solidArea.length; i++) {
-                    this.updateObjectView(this.service.logic.game.context, this.service.logic.game.solidArea[i])
+                    this.updateObjectView(this.context, this.service.logic.game.solidArea[i]);
                 }
                 //redraw boxes
                 for (var i = 0; i < this.service.logic.game.destroyableArea.length; i++) {
-                    this.updateObjectView(this.service.logic.game.context, this.service.logic.game.destroyableArea[i])
+                    this.updateObjectView(this.context, this.service.logic.game.destroyableArea[i]);
                 }
                 //redraw players
                 for (var i = 0; i < this.service.logic.game.players.length; i++) {
-                    this.updatePlayerView(this.service.logic.game.context, this.service.logic.game.players[i])
+                    this.updatePlayerView(this.context, this.service.logic.game.players[i]);
                 }
             }
             else {
-                this.secondMenu.currentView=3;
+                this.secondMenu.currentView = 4;
             }
         }
     }
+
 
     this.updateTileView = function (context, tile) {
         context.beginPath();
@@ -85,7 +121,7 @@ function GameView(service) {
         context.stroke();
     }
 
-    // draw the current frame
+// draw the current frame
     this.drawSprite = function (context, x, y, sprite) {
         // get the row and col of the frame
         var row = Math.floor(sprite.animationSequence[sprite.currentFrame] / sprite.spritesheet.framesPerRow);
@@ -110,7 +146,7 @@ function GameView(service) {
         context.rect(player.x, player.y, player.size.w, player.size.h);
         context.stroke();
 
-        //player.animations[player.direction].update();
+
         this.drawSprite(context, player.x, player.y, player.animations[player.direction])
     }
 

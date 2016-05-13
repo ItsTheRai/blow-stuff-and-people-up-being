@@ -4,6 +4,12 @@
 function Controller(service) {
     this.service = service;
     this.keys = [];
+
+
+    this.startGame = function(){
+
+    }
+
     this.bindListeners = function () {
         var self = this;
         document.addEventListener('keydown',function(e){
@@ -12,14 +18,11 @@ function Controller(service) {
         document.addEventListener('keyup', function(e){
             self.onKeyUp(e);
         })
-        //document.addEventListener('onmouse', function(e){
-        //    self.onKeyUp(e);
-        //})
     }
 
     this.onKeyDown = function (event) {
         this.keys[event.keyCode] = true;
-        this.updateKeyPresses()
+        this.updateKeyPresses();
     }
 
     this.onKeyUp = function (event) {
@@ -35,14 +38,6 @@ function Controller(service) {
 
     this.updateKeyPresses = function () {
         this.service.updateInput(this.keys)
-        //console.log("mygameare", myGameArea)
-        //window.requestAnimationFrame(updateGame);
-        //if (!myGameArea.gameRunning) {
-        //    myGameArea.gameloopSound.stop();
-        //}
-
-        //listen for key presses
-        //left
 
     }
 }

@@ -10,9 +10,14 @@ function BotAI(player, difficulty) {
     this.running = false;
     this.init = function (game){
         this.game = game;
-        for(var i=0; i < game.players.length; i++){
-            if(this.player.id!=game.players[i].id) {
-                this.targets.push(game.players[i]);
+        var shufPLayers = getShuffle(game.players);
+
+        //console.log("shuf",shufPLayers)
+        //console.log("orig", this.game.players)
+        for(var i=0; i < shufPLayers.length; i++){
+            var player = shufPLayers[i]
+            if(this.player.id!=player.id) {
+                this.targets.push(player);
             }
         }
     }
