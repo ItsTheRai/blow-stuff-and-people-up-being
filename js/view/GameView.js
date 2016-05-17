@@ -62,7 +62,6 @@ function GameView(service) {
 
         else if (this.secondMenu.currentView == 3) {
             if (this.secondMenu.initGame && !this.service.logic.game.gameRunning) {
-                console.log("init new game")
                 this.service.logic.game.init();
                 this.secondMenu.initGame = false;
             }
@@ -70,6 +69,7 @@ function GameView(service) {
                 this.secondMenu.showEndMenu(this.context, this.service);
             }
             else if (this.service.logic.game.gameRunning) {
+                //TODO game loop here
                 //clear canvas
                 this.clear(this.context)
                 //redraw all tiles

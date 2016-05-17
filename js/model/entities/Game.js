@@ -13,8 +13,8 @@ function Game(canvas) {
         h: 48,
     };
     this.playerSize = {
-        w: 38,
-        h: 38,
+        w: 48,
+        h: 48,
     };
     this.players = [];
     this.destroyableArea = [];
@@ -295,7 +295,7 @@ function Game(canvas) {
                 }
             }
         }
-        if(this.gameSize!=20){
+        if (this.gameSize != 20) {
             //maze
             //grid
             for (var i = 1; i < this.xTiles - 2; i++) {
@@ -368,8 +368,6 @@ function Game(canvas) {
         }
 
         this.gameRunning = true;
-        console.log("game", this);
-
     }
 
     this.reset = function () {

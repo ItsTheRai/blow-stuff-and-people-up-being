@@ -80,9 +80,7 @@ function Logic(game) {
             for (var i = 0; i < this.game.players.length; i++) {
                 if (this.game.players[i].alive) {
                     if (this.game.players[i] instanceof Bot) {
-                        //console.log("moving bot")
                         //get bot moves
-                        //var nextMove = this.getNextMove(this.game.players[i]);
                         var nextMove = this.game.players[i].botAI.getNextMove(this.game);
                         this.game.players[i].speedX = nextMove[0];
                         this.game.players[i].speedY = nextMove[1];
@@ -136,6 +134,7 @@ function Logic(game) {
                     //TODO restore this
                     else if (bombb.exploded) {
                         this.game.players[i].bombs.splice(this.game.players[i].bombs.indexOf(bombb), 1);
+                        bombb.alive = false;
                     }
                     //login here to injure player/destroy wall
                     else if (bombb.exploding) {
@@ -156,7 +155,7 @@ function Logic(game) {
                                 }
 
                                 for (var x = 0; x < this.game.destroyableArea.length; x++) {
-                                    if (!this.game.destroyableArea[x].triggered &&
+                                    if (bombb.fire[q]!= null && !this.game.destroyableArea[x].triggered &&
                                         getGridPosition(this.game.destroyableArea[x], this.game) ==
                                         getGridPosition(bombb.fire[q], this.game)) {
                                         this.game.destroyableArea[x].triggered = true;
@@ -201,9 +200,6 @@ function Logic(game) {
                     counter++;
                 }
             }
-            console.log(this.gameFinished)
-
-            //consol.log(counter)
             if (counter <= 1) {
                 if (!this.gameFinished) {
                     this.gameFinished = true;
@@ -232,6 +228,9 @@ function Logic(game) {
         var moveY = true;
         for (var i = 0; i < this.game.players.length; i++) {
             for (var j = 0; j < this.game.players[i].bombs.length; j++) {
+                if(player.bombs.indexOf(this.game.players[i].bombs[j])!=-1){
+                    continue;
+                }
                 //test for bombs for each player
                 var crash = this.crashWithRectangele(player, this.game.players[i].bombs[j]);
                 if (crash == 0) {
@@ -247,6 +246,7 @@ function Logic(game) {
                     player.speedX = Math.max(player.speedX, 0);
                 }
             }
+
             //skip if found itself
             if (player.id == this.game.players[i].id) {
                 continue;

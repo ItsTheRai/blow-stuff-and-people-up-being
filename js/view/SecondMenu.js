@@ -200,7 +200,6 @@ function SecondMenu() {
     }
 
     this.showEndMenu = function (context, service) {
-        console.log("showing end menu")
         this.view4visible = true;
         var elem = context.canvas,
             elemLeft = elem.offsetLeft,
@@ -212,7 +211,6 @@ function SecondMenu() {
         elem.addEventListener('click', function screen3(event) {
             var x = event.pageX - elemLeft,
                 y = event.pageY - elemTop;
-
             // Collision detection between clicked offset and element.
             for (var i = 0; i < elements.length; i++) {
                 if (y > elements[i].top && y < elements[i].top + elements[i].height
@@ -220,7 +218,6 @@ function SecondMenu() {
                     if (i == 0) {
                         self.view4visible = false;
                         elem.removeEventListener("click", screen3, false);
-                        //self.resetGame(context);
                         self.currentView = 1;
                     }
                 }

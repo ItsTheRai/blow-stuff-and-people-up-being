@@ -38,6 +38,5 @@ function Controller(service) {
 
     this.updateKeyPresses = function () {
         this.service.updateInput(this.keys)
-
     }
 }

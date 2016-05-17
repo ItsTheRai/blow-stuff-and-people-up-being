@@ -1,43 +1,34 @@
 /**
  * Created by rai on 09/05/16.
  */
-function Service(game){
+function Service(game) {
 
     this.logic = new Logic(game);
 
-    this.init = function(){
-        console.log("service init")
+    this.init = function () {
         //init game state
-        //this.logic = new Logic(game);
         this.logic.init();
-        //console.log(this.logic.game)
         //init keybord listeners
-    }
+    };
 
-    this.startGame = function(){
+    this.startGame = function () {
         this.logic.init();
 
-    }
+    };
 
-    this.stopGame = function(){
+    this.stopGame = function () {
         this.logic.stopGame();
-    }
+    };
 
-    //this.resetGame = function(){
-    //    this.logic.resetGame();
-    //}
 
-    this.updateGameStep = function(){
-        //console.log(this.logic)
-        if(this.logic!=null&&this.logic.game!=null) {
-            //console.log("running brah")
+    this.updateGameStep = function () {
+        if (this.logic != null && this.logic.game != null) {
             this.logic.updateGameStep();
         }
-    }
+    };
 
-    this.updateInput = function(input){
-        //if(input.length!=0){
-            this.logic.updateMovement(input);
-        //}
-    }
+    this.updateInput = function (input) {
+        this.logic.updateMovement(input);
+
+    };
 }
