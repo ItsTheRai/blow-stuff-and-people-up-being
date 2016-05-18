@@ -1,0 +1,21 @@
+\begin{thebibliography}{1}
+
+\bibitem{MVC}
+Glenn~E Krasner, Stephen~T Pope, et~al.
+\newblock A description of the model-view-controller user interface paradigm in
+  the smalltalk-80 system.
+\newblock {\em Journal of object oriented programming}, 1(3):26--49, 1988.
+
+\bibitem{mediator}
+Tommi Mikkonen.
+\newblock Formalizing design patterns.
+\newblock In {\em Proceedings of the 20th international conference on Software
+  engineering}, pages 115--124. IEEE Computer Society, 1998.
+
+\bibitem{spritesheets}
+Michael Weeks.
+\newblock Creating a web-based, 2-d action game in javascript with html5.
+\newblock In {\em Proceedings of the 2014 ACM Southeast Regional Conference},
+  page~7. ACM, 2014.
+
+\end{thebibliography}

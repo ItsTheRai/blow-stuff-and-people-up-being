@@ -1,0 +1,133 @@
+\documentclass[]{article}
+
+\setcounter{secnumdepth}{5}
+
+\usepackage{fontspec}
+\setmainfont{DejaVu Sans}
+
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
+% Title Page
+\title{Developmen of a Bomberman - like game in JavaScript and HTML}
+\author{144175}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+asdfasfadf
+\end{abstract}
+
+\section{Introduction}
+( ͡° ͜ʖ ͡°)
+\section{Application description}
+This section is offers a high level description of the application and the design choices taken from a user experience and user interface point of view.
+\subsection{Game description}
+The application developed here is a variation of the hugely popular 1983 Bomberman game developed by Shinichi Nakamoto. As with the original game, the main objective here is to work your way though a maze of obstacles and other players to be the last-man-standing. Player can plant bombs that can destroy obstacles (and other players) but not walls, and collect perks that improve their performance in the game. The available perks are speed, that increases the players movement speed by 50\%, bomb, that lets the player plant another additional bomb ( the default is one at a time), and explosion, that increases the explosive range of the bomb. Players have the option to either play by themselves against bots or against another player. There are 3 different game modes to choose from when playing by yourself or with another human player: VS, Battle and Battle Royale. VS allows 2 players to go head-to-head against one another, while the Battle mode adds 2 additional player to the game thus increasing the total number of players to 4. Battle Royale increases the total number of players even further to 12.
+\subsection{}
+
+\section{Software Design}
+This section discusses the design choices made in producing the interactive web application. Firstly, the overall structure of the application and will be show, where it was chosen to use a Model-View-Controller(MVC) design paradigm to structure the application. Secondly, each of the three parts of the MVC implementation will be discussed in greater detail.
+The Model houses the definitions of the games model and internal behaviour. Here, all logic concerned with the application's interaction with the model is located, as well as mediator classes that facilitate loose coupling between all classes.
+The Controller handles all user input and sends it down to the Model logic layer for processing. The View layer is concerned with displaying the changing states of the application, as well as handling all animation specific code.
+While developing the application, it very quickly emerged that without structure, anything more than a simple application is too difficult to manage, and making small changes in one part of the application would have dramatic un unforeseen effects somewhere else. Therefore, it was decided that the application should be as loosely-coupled as possible, to improve upon improvements, maintainability and extensibility. To achieve these goals, it was chosen to use a Model-View-Controller approach\cite{MVC}. 
+While is possible to create our application without it, the added flexibility is of great importance when developing an application such as a video game, where small changes have to be performed constantly to improve user experience.
+
+\subsection{Model}
+The model is concerned with retaining the state of the application as well as updating it. It is split up into 3 sub-layers:entity, logic and service layer.
+
+\subsubsection{Entity Layer}
+The entity layer contains the data model of the application, where the definitions for the Game, Player, Perk, Animation, Bomb, Fire are held. The data model is manipulated by the logic layer. BY keeping the our model separate from everything else, a separation is achieved that makes change implementation easier. 
+\subsubsection{Logic Layer}
+This layer allows for access and manipulation of the data model. A mediator pattern is implemented here\cite{mediator} with one single object that is used to share information between all classes. This allows all entity layer classes to only store information about themselves. When information needs to be exchanged between objects, the mediator object fulfils this purpose by storing the state of all objects within itself and making calls to the model when requested by the service layer.
+Here collision detection,the artificial intelligence that controls non-human players, object destruction and perk spawning and collection is implemented.
+
+Collision detection is implemented by comparing the desired movement direction with the game model to determine, if such a move is possible. To achieve this, many difficulties had to be overcome. Since the player has the option to move horizontally, vertically, as well as diagonally, it is not enough to simply stop the player, if an obstacle has been met, e.g. if the player is moving north-west and encounters a vertical obstacle, it should still be allowed to move north, as there is no obstacle there. To incorporate this into the design of the application, it was necessary to keep track of where a collision occurred, not just whether it did. By knowing which side a rectangle shaped object, it is possible to simply set the movement of that object in that direction to zero, thus allowing for the object to move in another direction.
+
+The artificial intelligence control system was implemented based on the following assumptions:
+\begin{enumerate}
+\item the main objective of each bot is to kill all other players
+\item the bot has to avoid being killed by other players and itself
+\item to improve its chances of survival, as well as offensive power, a bot has to collect perks to improve its performance
+\item in order to reach its opponents and collect perks, a bot has to destroy boxes
+\end{enumerate}
+A naive implementation based on these assumption would be for a bot to initially set all of the games players as targets. Once a target is destroyed, it is removed from the list. From there, the bot simply moves in the direction of its last target and keeps on deploying bombs when it is close enough. At the same time, a bot does not move in the direction of its target, if that would mean getting in the firing range of a bomb. If the bot is already too close to a planted bomb, it moved away from it. When encountering a destroyable object(box), the bot also deploys a bomb to destroy it and flees from the explosion spot.
+If, after a box has been destroyed, a perk is exposed, the perk is added to the targets list and now the bod tries to reach it as quickly as possible, thus improving its chances of survival.
+This solution, although very simple and omitting any tactical knowledge available to the artificial intelligence agent, still proves to be challenging to overcome.
+
+
+\subsubsection{Service Layer}
+Here different services are exposed to the Controller and View. The service layer can access the logic layer, in order to update the game state with changing inputs, as well as to retrieve the state to the presentation(view) layer.
+
+\subsection{View}
+The view layer handles the presentation of the underlying data - model to the screen. Here, animation rules are defined based on the underlying model, e.g. how users players "move" when a button is pressed, how bomb explosion are animated or how damage is dealt to players and destroyable objects.
+
+\subsubsection{Player Animation}
+Player animation is done using sprite sheets as described by M. Weeks \cite{spritesheets}. The advantage of using one image file, with all possible animations on it is that it reduces the performance overhead of having to load/store many different files for each animation. Each player has an default animation and an alternative animation sprite sheet and a direction of movement. Based on the direction they are travelling in, the appropriate animation is fetched and looped though, thus creating the illusion of movement. The speed of the animation loop is adjusted based on the speed of the player i.e. the larger the speed of a the player is, the quicker the animation loop will be displayer. Figure \ref{fig:player1Default} shows the default animation of player 1. When playing a multiplayer game, player 2 has a different animation as shown in figure \ref{fig:player2Default}. The animation for bots is different again and can be seen in figure \ref{fig:player3Default}. 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75	\textwidth]{bomb}
+    \caption{Player 1 graphics sprite sheet}
+    \label{fig:player1Default}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75	\textwidth]{bomb}
+    \caption{Player 2 graphics sprite sheet}
+    \label{fig:player2Default}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75	\textwidth]{bomb}
+    \caption{Computer player graphics sprite sheet}
+    \label{fig:player3Default}
+\end{figure}
+
+Each player type also has an alternative animation that can be unlocked by entering a keyboard code. All alternative animation sprite sheets can be seen in figure \ref{fig:player1Alt}, \ref{fig:player2Alt}, and \ref{fig:player3alt}. It was chosen to make these animation not available by default because of their potentially offensive nature.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75	\textwidth]{bomb}
+    \caption{Player 1 graphics sprite sheet}
+    \label{fig:player1Alt}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75	\textwidth]{bomb}
+    \caption{Player 2 graphics sprite sheet}
+    \label{fig:player2Alt}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75	\textwidth]{bomb}
+    \caption{Computer player graphics sprite sheet}
+    \label{fig:player3alt}
+\end{figure}
+
+\subsubsection{Explosion Animation}
+Explosions are animated in a similar way to players. Once a bomb is planted by a player, a timer is started representing the time that it will take for the bomb to explode. This is shown in the animation as a countdown clock in seconds that starts at 3 and ends with 1. Once the timer reaches 0, a different animation is created, displaying the explosion. The bomb animation sprite sheet can be seen in figure \ref{fig:bomb}.  
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75	\textwidth]{bomb}
+    \caption{Computer player graphics sprite sheet}
+    \label{fig:bomb}
+\end{figure}
+
+An explosion is a collection of fire sprite sheets(figure \ref{fig:explosion}). When adding more fire objects to the explosion sequentially, starting from the location of the bomb that set it off outwards, a nice animation of an explosion is obtained. 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75	\textwidth]{bomb}
+    \caption{Computer player graphics sprite sheet}
+    \label{fig:explosion}
+\end{figure}
+
+\subsubsection{Menus}
+\subsection{Controller}
+The controller layer is responsible for tracking changes in user input by using event listeners. The listeners used are "keyup" and "keydown" listener. "Keydown" listeners are used to update the state of the controller and indicate that the player is moving in a particular direction. After each key press, the service layer is called, that is responsible for updating the values of pressed keys. The "keyup" listener is used for planting bombs, just like with the other listener, once this listener is fired, the appropriate bomb is planted, if the corresponding button is pressed. 
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
