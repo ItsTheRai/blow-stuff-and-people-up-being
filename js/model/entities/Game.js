@@ -13,8 +13,8 @@ function Game(canvas) {
         h: 48,
     };
     this.playerSize = {
-        w: 64,
-        h: 64,
+        w: 48,
+        h: 48,
     };
     this.players = [];
     this.destroyableArea = [];
@@ -367,7 +367,7 @@ function Game(canvas) {
 
                     }
                     else if (j % 2 == 1 || i % 2 == 1) {
-                        //this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * i, this.gridSize.h * j, this.gridSize))
+                        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * i, this.gridSize.h * j, this.gridSize))
                     }
                 }
             }

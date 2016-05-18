@@ -390,17 +390,29 @@ function Logic(game) {
         player.y += player.speedY;
 
         //set player direction for animation
-        if (player.speedX > 0) {
-            player.direction = 4;
-        }
-        else if (player.speedX < 0) {
-            player.direction = 2;
-        }
-        else if (player.speedY > 0) {
+        if (player.speedX == 0 && player.speedY > 0) {
             player.direction = 1;
         }
-        else if (player.speedY < 0) {
+        else if (player.speedX < 0 && player.speedY > 0) {
+            player.direction = 2;
+        }
+        else if (player.speedX < 0 && player.speedY == 0) {
             player.direction = 3;
+        }
+        else if (player.speedX < 0 && player.speedY < 0) {
+            player.direction = 4;
+        }
+        else if (player.speedX == 0 && player.speedY < 0) {
+            player.direction = 5;
+        }
+        else if (player.speedX > 0 && player.speedY < 0) {
+            player.direction = 6;
+        }
+        else if (player.speedX > 0 && player.speedY == 0) {
+            player.direction = 7;
+        }
+        else if (player.speedX > 0 && player.speedY > 0) {
+            player.direction = 8;
         }
         else player.direction = 0;
         //reset values

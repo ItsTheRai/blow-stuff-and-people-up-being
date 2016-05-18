@@ -111,6 +111,15 @@ function GameView(service) {
                 this.secondMenu.currentView = 4;
             }
         }
+        else if (this.secondMenu.currentView == 5) {
+            if (this.secondMenu.view5visible) {
+                return
+            }
+            else {
+                this.secondMenu.showHelpMenu(this.context, this.service)
+            }
+            return;
+        }
     }
 
 
@@ -136,11 +145,12 @@ function GameView(service) {
 
     this.updatePlayerView = function (context, player) {
         //todo remove this in final release
-        context.beginPath();
-        context.lineWidth = "1";
-        context.rect(player.x, player.y, player.size.w, player.size.h);
-        context.stroke();
+        //context.beginPath();
+        //context.lineWidth = "1";
+        //context.rect(player.x, player.y, player.size.w, player.size.h);
+        //context.stroke();
         this.drawSprite(context, player.x, player.y, player.animations[player.direction])
+        console.log(player.direction);
     }
 
     this.updateObjectView = function (context, object) {

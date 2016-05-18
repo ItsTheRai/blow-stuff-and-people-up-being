@@ -2,7 +2,6 @@
  * Created by rai on 10/05/16.
  */
 function SecondMenu() {
-    //this.service = service;
     this.visible = true;
     this.loading = true;
     //this.currentView = 1;
@@ -10,6 +9,7 @@ function SecondMenu() {
     this.view2visible = false;
     this.view3visible = false;
     this.view4visible = false;
+    this.view5visible = false;
 
     this.initGame = false;
 
@@ -34,22 +34,18 @@ function SecondMenu() {
                         self.view1visible = false;
                         elem.removeEventListener("click", screen1, false);
                         service.logic.game.setPlayerCount(1)
-                        //self.changeView(context, service);
                         self.currentView = 2;
-                        //redirect
                     }
                     else if (i == 1) {
                         self.view1visible = false;
                         elem.removeEventListener("click", screen1, false);
                         service.logic.game.setPlayerCount(2);
-                        //self.changeView(context, service);
                         self.currentView = 2;
                     }
                     else if (i == 2) {
                         self.view1visible = false;
                         elem.removeEventListener("click", screen1, false);
                         self.currentView = 5;
-                        //self.changeView(context, service);
                     }
                 }
             }
@@ -92,7 +88,7 @@ function SecondMenu() {
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
         elements.forEach(function (element) {
             context.fillStyle = element.colour;
-            context.fillRect(element.left, element.top, element.width, element.height);
+            //context.fillRect(element.left, element.top, element.width, element.height);
             context.font = element.font;
             context.fillStyle = element.fillStyle;
             //context.textAlign = "none";
@@ -191,7 +187,7 @@ function SecondMenu() {
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
         elements.forEach(function (element) {
             context.fillStyle = element.colour;
-            context.fillRect(element.left, element.top, element.width, element.height);
+            //context.fillRect(element.left, element.top, element.width, element.height);
             context.font = element.font;
             context.fillStyle = element.fillStyle;
             //context.textAlign = "none";
@@ -228,12 +224,8 @@ function SecondMenu() {
         for (var i = 0; i < service.logic.game.players.length; i++) {
             if (service.logic.game.players[i].alive) {
                 winner = service.logic.game.players[i].id;
-                //console.log(winner);
             }
         }
-        //winner++;
-        //console.log(winner);
-
         console.log()
         elements.push({
             colour: '#0000aa',
@@ -250,14 +242,16 @@ function SecondMenu() {
         //render elements
         context.fillStyle = "#000000";
         context.clearRect(0, 0, context.canvas.width, context.canvas.height)
+        //context.globalAlpha = 0.2;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        //context.globalAlpha = 1;
         elements.forEach(function (element) {
             context.fillStyle = element.colour;
-            context.fillRect(element.left, element.top, element.width, element.height);
+            //context.fillRect(element.left, element.top, element.width, element.height);
             context.font = element.font;
             context.fillStyle = element.fillStyle;
             context.fillText("player " + element.winner + " wins", element.left, element.top + 150);
-            context.fillText(element.text, element.left, element.top + 30);
+            context.fillText(element.text, element.left + 20, element.top + element.height);
         });
     }
 
@@ -276,5 +270,89 @@ function SecondMenu() {
         this.visible = false;
         this.loading = false;
         context.clearRect(0, 0, context.canvas.width, context.canvas.height)
+    }
+
+
+
+
+    this.showHelpMenu = function (context, service) {
+        this.view5visible = true;
+        var elem = context.canvas,
+            elemLeft = elem.offsetLeft,
+            elemTop = elem.offsetTop,
+            context = elem.getContext('2d'),
+            elements = [];
+        var self = this;
+
+        elem.addEventListener('click', function screen5(event) {
+            var x = event.pageX - elemLeft,
+                y = event.pageY - elemTop;
+
+            // Collision detection between clicked offset and element.
+            for (var i = 0; i < elements.length; i++) {
+                if (y > elements[i].top && y < elements[i].top + elements[i].height
+                    && x > elements[i].left && x < elements[i].left + elements[i].width) {
+                    if (i == 0) {
+                        self.view5visible = false;
+                        elem.removeEventListener("click", screen5, false);
+                        self.currentView = 1;
+                    }
+                }
+            }
+        }, false);
+
+        elements.push({
+            colour: '#0000aa',
+            width: 200,
+            height: 25,
+            top: 50,
+            left: 200,
+            fillStyle: "white",
+            font: "20px Arial",
+            text: "Go back"
+        });
+        elements.push({
+            colour: '#0000aa',
+            width: 200,
+            height: 25,
+            top: 150,
+            left: 10,
+            fillStyle: "white",
+            font: "20px Arial",
+            text: "Player 1 press the arrow keys to move "
+        });
+        elements.push({
+            colour: '#0000aa',
+            width: 200,
+            height: 25,
+            top: 200,
+            left: 10,
+            fillStyle: "white",
+            font: "20px Arial",
+            text: "and SPACE to plant a bomb"
+        });
+        elements.push({
+            colour: '#0000aa',
+            width: 200,
+            height: 25,
+            top: 250,
+            left: 10,
+            fillStyle: "white",
+            font: "20px Arial",
+            text: "Player 2 press A S D W to move and 0 to plant the bomb"
+        });
+
+        //render elements
+        context.fillStyle = "#000000";
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height)
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        elements.forEach(function (element) {
+            context.fillStyle = element.colour;
+            //context.fillRect(element.left, element.top, element.width, element.height);
+            context.font = element.font;
+            context.fillStyle = element.fillStyle;
+            //context.textAlign = "none";
+            context.fillText(element.text, element.left, element.top + element.height / 1.5);
+        });
     }
 }

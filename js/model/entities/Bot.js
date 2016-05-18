@@ -32,15 +32,25 @@ function Bot(cnt, id, x, y, size, difficulty) {
     this.direction = 0;
     this.animations = [];
     //set up all animations
-    var ss = new SpriteSheet('/pureBomberman/media/betty2.png', 48, 48);
+    var ss1 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_front48.png', 48, 48);
+    var ss2 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_front_left48.png', 48, 48);
+    var ss3 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_left48.png', 48, 48);
 
-    this.animations.push(new Animation(this.context, ss, 15 / this.speed, 0, 0));
-    this.animations.push(new Animation(this.context, ss, 15 / this.speed, 0, 3));
-    this.animations.push(new Animation(this.context, ss, 15 / this.speed, 4, 7));
-    this.animations.push(new Animation(this.context, ss, 15 / this.speed, 8, 11));
-    this.animations.push(new Animation(this.context, ss, 15 / this.speed, 12, 15));
+    var ss4 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_back_left48.png', 48, 48);
+    var ss5 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_back48.png', 48, 48);
+    var ss6 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_back_right48.png', 48, 48);
+    var ss7 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_right48.png', 48, 48);
+    var ss8 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_front_right48.png', 48, 48);
 
-    this.animations.push(new Animation(this.context, ss, 15 / this.speed, 16, 16));
+    this.animations.push(new Animation(this.context, ss1, 5 / this.speed, 0, 0));
+    this.animations.push(new Animation(this.context, ss1, 5 / this.speed, 0, 7));
+    this.animations.push(new Animation(this.context, ss2, 5 / this.speed, 0, 7));
+    this.animations.push(new Animation(this.context, ss3, 5 / this.speed, 0, 7));
+    this.animations.push(new Animation(this.context, ss4, 5 / this.speed, 0, 7));
+    this.animations.push(new Animation(this.context, ss5, 5 / this.speed, 0, 7));
+    this.animations.push(new Animation(this.context, ss6, 5 / this.speed, 0, 7));
+    this.animations.push(new Animation(this.context, ss7, 5 / this.speed, 0, 7));
+    this.animations.push(new Animation(this.context, ss8, 5 / this.speed, 0, 7));
 
     this.plantBomb = function (tileX, tileY, gridSize) {
         if (this.bombs.length < this.maxbombs) {
