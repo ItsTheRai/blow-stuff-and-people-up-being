@@ -126,12 +126,6 @@ function GameView(service) {
         // get the row and col of the frame
         var row = Math.floor(sprite.animationSequence[sprite.currentFrame] / sprite.spritesheet.framesPerRow);
         var col = Math.floor(sprite.animationSequence[sprite.currentFrame] % sprite.spritesheet.framesPerRow);
-
-        //context.beginPath();
-        //context.lineWidth = "1";
-        //context.rect(x, y, sprite.spritesheet.frameWidth, sprite.spritesheet.frameHeight);
-        //context.stroke();
-
         context.drawImage(
             sprite.spritesheet.image,
             col * sprite.spritesheet.frameWidth, row * sprite.spritesheet.frameHeight,
@@ -141,12 +135,11 @@ function GameView(service) {
     };
 
     this.updatePlayerView = function (context, player) {
+        //todo remove this in final release
         context.beginPath();
         context.lineWidth = "1";
         context.rect(player.x, player.y, player.size.w, player.size.h);
         context.stroke();
-
-
         this.drawSprite(context, player.x, player.y, player.animations[player.direction])
     }
 

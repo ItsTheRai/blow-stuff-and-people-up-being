@@ -2,6 +2,8 @@
  * Created by rai on 08/05/16.
  */
 function BotAI(player, difficulty) {
+    this.previousX;
+    this.previousY;
     this.moving = false;
     this.game;
     this.player = player;
@@ -57,51 +59,6 @@ function BotAI(player, difficulty) {
                 var x = getXfromPosition(getGridPlayerPosition(game.players[i].bombs[j], game), game.xTiles);
                 var y = getYfromPosition(getGridPlayerPosition(game.players[i].bombs[j], game), game.xTiles);
                 graphArray[x][y] = 0;
-                //if(game.players[i].bombs[j].power == 1){
-                //    graphArray[x][y] = 0;
-                //    graphArray[x-1][y-1] = 0;
-                //    graphArray[x-1][y] = 0;
-                //    graphArray[x-1][y+1] = 0;
-                //    graphArray[x][y-1] = 0;
-                //    graphArray[x][y+1] = 0;
-                //    graphArray[x+1][y-1] = 0;
-                //    graphArray[x+1][y] = 0;
-                //    graphArray[x+1][y+1] = 0;
-                //}
-                //if(game.players[i].bombs[j].power == 2){
-                //    graphArray[x-2][y-1] = 0;
-                //    graphArray[x-2][y-0] = 0;
-                //    graphArray[x-2][y+1] = 0;
-                //    graphArray[x+2][y-1] = 0;
-                //    graphArray[x+2][y-0] = 0;
-                //    graphArray[x+2][y+1] = 0;
-                //    graphArray[x-1][y-2] = 0;
-                //    graphArray[x-1][y+2] = 0;
-                //    graphArray[x-0][y-2] = 0;
-                //    graphArray[x-0][y+2] = 0;
-                //    graphArray[x+1][y-2] = 0;
-                //    graphArray[x+1][y+2] = 0;
-                //}
-                //if(game.players[i].bombs[j].power == 3){
-                //    graphArray[x-3][y-1] = 0;
-                //    graphArray[x-3][y-0] = 0;
-                //    graphArray[x-3][y+1] = 0;
-                //    graphArray[x+3][y-1] = 0;
-                //    graphArray[x+3][y-0] = 0;
-                //    graphArray[x+3][y+1] = 0;
-                //    graphArray[x-1][y-3] = 0;
-                //    graphArray[x-1][y+3] = 0;
-                //    graphArray[x-0][y-3] = 0;
-                //    graphArray[x-0][y+3] = 0;
-                //    graphArray[x+1][y-3] = 0;
-                //    graphArray[x+1][y+3] = 0;
-                //
-                //    graphArray[x-2][y-2] = 0;
-                //    graphArray[x-2][y+2] = 0;
-                //    graphArray[x+2][y-2] = 0;
-                //    graphArray[x+2][y+2] = 0;
-                //}
-
                 for (var k = 0; k < game.players[i].bombs[j].fire.length; k++) {
                     if (game.players[i].bombs[j].fire[k] != null) {
                         var x = getXfromPosition(getGridPlayerPosition(game.players[i].bombs[j].fire[k], game), game.xTiles);
@@ -145,50 +102,6 @@ function BotAI(player, difficulty) {
             for (var j = 0; j < game.players[i].bombs.length; j++) {
                 var x = getXfromPosition(getGridPlayerPosition(game.players[i].bombs[j], game), game.xTiles);
                 var y = getYfromPosition(getGridPlayerPosition(game.players[i].bombs[j], game), game.xTiles);
-                //if(game.players[i].bombs[j].power == 1){
-                //    graphArray[x][y] = 0;
-                //    graphArray[x-1][y-1] = 0;
-                //    graphArray[x-1][y] = 0;
-                //    graphArray[x-1][y+1] = 0;
-                //    graphArray[x][y-1] = 0;
-                //    graphArray[x][y+1] = 0;
-                //    graphArray[x+1][y-1] = 0;
-                //    graphArray[x+1][y] = 0;
-                //    graphArray[x+1][y+1] = 0;
-                //}
-                //if(game.players[i].bombs[j].power == 2){
-                //    graphArray[x-2][y-1] = 0;
-                //    graphArray[x-2][y-0] = 0;
-                //    graphArray[x-2][y+1] = 0;
-                //    graphArray[x+2][y-1] = 0;
-                //    graphArray[x+2][y-0] = 0;
-                //    graphArray[x+2][y+1] = 0;
-                //    graphArray[x-1][y-2] = 0;
-                //    graphArray[x-1][y+2] = 0;
-                //    graphArray[x-0][y-2] = 0;
-                //    graphArray[x-0][y+2] = 0;
-                //    graphArray[x+1][y-2] = 0;
-                //    graphArray[x+1][y+2] = 0;
-                //}
-                //if(game.players[i].bombs[j].power == 3){
-                //    graphArray[x-3][y-1] = 0;
-                //    graphArray[x-3][y-0] = 0;
-                //    graphArray[x-3][y+1] = 0;
-                //    graphArray[x+3][y-1] = 0;
-                //    graphArray[x+3][y-0] = 0;
-                //    graphArray[x+3][y+1] = 0;
-                //    graphArray[x-1][y-3] = 0;
-                //    graphArray[x-1][y+3] = 0;
-                //    graphArray[x-0][y-3] = 0;
-                //    graphArray[x-0][y+3] = 0;
-                //    graphArray[x+1][y-3] = 0;
-                //    graphArray[x+1][y+3] = 0;
-                //
-                //    graphArray[x-2][y-2] = 0;
-                //    graphArray[x-2][y+2] = 0;
-                //    graphArray[x+2][y-2] = 0;
-                //    graphArray[x+2][y+2] = 0;
-                //}
 
                 graphArray[x][y] = 0;
                 for (var k = 0; k < game.players[i].bombs[j].fire.length; k++) {
@@ -220,7 +133,8 @@ function BotAI(player, difficulty) {
     };
 
     this.getNextMove = function (game) {
-        //console.log(this.escaping);
+        this.previousX = this.player.x;
+        this.previousY = this.player.y;
         //check if target destroyed
         if (this.targets[this.targets.length - 1] == null || this.targets[this.targets.length - 1].alive == false) {
             this.targets.splice(this.targets.indexOf(this.targets[this.targets.length - 1]), 1);
@@ -228,7 +142,8 @@ function BotAI(player, difficulty) {
         }
         //if no targets, game is over, don't do anything
         if (this.targets.length == 0) {
-            return;
+            console.log("end of targets");
+            return [0,0,false];
         }
         //check if need to flee from bomb
         if (!this.escaping) {
@@ -359,7 +274,7 @@ function BotAI(player, difficulty) {
             //console.log(this.path);
             //cant reach target, so find a box and blow it up
             if (this.path.length == 0) {
-                console.log("shouldnt have happened");
+                //console.log("shouldnt have happened");
                 return [0, 0, false];
             }
             //target can be reached, so move towards it
@@ -422,9 +337,10 @@ function BotAI(player, difficulty) {
                 this.moving = false;
             }
             //plant bomb if near target
+
+            //todo
+
             if (!this.escaping && this.getNearDestroyableObject(path, game)) {
-                //result.push(false);
-                //console.log("this");
                 result.push(true);
             }
             else result.push(false);
@@ -446,12 +362,20 @@ function BotAI(player, difficulty) {
             var objectX = getXfromPosition(tileGridPos, game.xTiles);
             var objectY = getYfromPosition(tileGridPos, game.xTiles);
 
-            if ((objectX == path[0].x && objectY == path[0].y) ||
-                (objectX == path[1].x && objectY == path[1].y &&
-                playerX == path[0].x && playerY == path[0].y)
-            ) {
-                //console.log(objectX, objectY, path);
-                return true;
+            if(path.length>=2) {
+                if ((objectX == path[0].x && objectY == path[0].y) ||
+                    (objectX == path[1].x && objectY == path[1].y &&
+                    playerX == path[0].x && playerY == path[0].y)
+                ) {
+                    //console.log(objectX, objectY, path);
+                    return true;
+                }
+            }
+            else if(path.length==1){
+                if ((objectX == path[0].x && objectY == path[0].y)
+                ) {
+                    return true;
+                }
             }
         }
         for (var i = 0; i < game.players.length; i++) {
@@ -461,10 +385,20 @@ function BotAI(player, difficulty) {
             var tileGridPos = getGridPlayerPosition(game.players[i], game);
             var objectX = getXfromPosition(tileGridPos, game.xTiles);
             var objectY = getYfromPosition(tileGridPos, game.xTiles);
-            if (objectX == path[1].x && objectY == path[1].y &&
-                playerX == path[0].x && playerY == path[0].y) {
-                console.log("i knew it");
-                return true;
+            if(path.length>=2) {
+                if ((objectX == path[0].x && objectY == path[0].y) ||
+                    (objectX == path[1].x && objectY == path[1].y &&
+                    playerX == path[0].x && playerY == path[0].y)
+                ) {
+                    //console.log(objectX, objectY, path);
+                    return true;
+                }
+            }
+            else if(path.length==1){
+                if ((objectX == path[0].x && objectY == path[0].y)
+                ) {
+                    return true;
+                }
             }
         }
         return false;

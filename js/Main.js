@@ -3,9 +3,6 @@
  */
 window.onload = function () {
     function startGame() {
-        this.id =0;
-
-
         this.canvas = document.getElementById("mycanvas");
         this.canvas.width = 600;
         this.canvas.height = 300;

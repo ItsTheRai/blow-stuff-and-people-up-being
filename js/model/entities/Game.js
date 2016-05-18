@@ -13,8 +13,8 @@ function Game(canvas) {
         h: 48,
     };
     this.playerSize = {
-        w: 48,
-        h: 48,
+        w: 64,
+        h: 64,
     };
     this.players = [];
     this.destroyableArea = [];
@@ -51,38 +51,22 @@ function Game(canvas) {
 
     this.init = function () {
         //set flag
+        console.log(this.id);
 
         //load sounds
         this.bombSound = new Sound("/pureBomberman/sound/bombExplosion.wav");
         this.powerupSound = new Sound("/pureBomberman/sound/powerUp.wav");
         this.gameloopSound = new Sound("/pureBomberman/sound/gameloop_normal.mp3");
         this.gameloopSound.setRepeat(true);
-        //this.gameloopSound.play();
+        this.gameloopSound.play();
         this.canvas.width = this.gridSize.w * this.xTiles;
         this.canvas.height = this.gridSize.h * this.yTiles;
         //init map
 
-        //paint in grid
-        for (var i = 0; i < this.xTiles; i++) {
-            for (var j = 0; j < this.yTiles; j++) {
-                this.tiles.push(new Tile(this.context, this.id++, i * this.gridSize.w, j * this.gridSize.w, this.gridSize));
-            }
-        }
-        //create grid border
-        //horizontal
-        for (var i = 0; i < this.xTiles; i++) {
-            this.solidArea.push(new SolidArea(this.context, this.id++, i * this.gridSize.w, 0, this.gridSize));
-            this.solidArea.push(new SolidArea(this.context, this.id++, i * this.gridSize.w, this.canvas.height - this.gridSize.h, this.gridSize));
-        }
-        //vertical
-        for (var j = 1; j < this.yTiles - 1; j++) {
-            this.solidArea.push(new SolidArea(this.context, this.id++, 0, j * this.gridSize.h, this.gridSize));
-            this.solidArea.push(new SolidArea(this.context, this.id++, this.canvas.width - this.gridSize.w, j * this.gridSize.h, this.gridSize));
-        }
-
         //init players
         var player0 = new Player(this.context, this.id++, this.gridSize.w, this.gridSize.h, this.playerSize);
         this.players.push(player0)
+        console.log(this.players[this.players.length-1])
 
         if (this.playerCount == 1) {
             var player1 = new Bot(this.context, this.id++, (this.xTiles - 1) * this.gridSize.w -
@@ -107,20 +91,49 @@ function Game(canvas) {
             player4.botAI.init(this);
             this.players.push(player4)
         }
+        else if(this.gameSize==20){
+            if (this.gameSize == 20) {
+                for (var i = 0; i < 6; i++) {
+                    for (var j = 0; j < 4; j++) {
+                        if (i == 0 && j == 0 || i == 5 && j == 3) {
+                            continue;
+                        }
+                        var bot = new Bot(this.context, this.id++,
+                            i * 4 * this.gridSize.w + 1 * this.gridSize.w,
+                            j * 4 * this.gridSize.h + 1 * this.gridSize.h, this.gridSize,
+                            this.playerSize, 0);
+                        bot.botAI.init(this);
+                        this.players.push(bot)
 
-        else if (this.gameSize == 20) {
+                    }
+                }
+            }
+        }
+
+        //paint in grid
+        for (var i = 0; i < this.xTiles; i++) {
+            for (var j = 0; j < this.yTiles; j++) {
+                this.tiles.push(new Tile(this.context, this.id++, i * this.gridSize.w, j * this.gridSize.w, this.gridSize));
+            }
+        }
+        //create grid border
+        //horizontal
+        for (var i = 0; i < this.xTiles; i++) {
+            this.solidArea.push(new SolidArea(this.context, this.id++, i * this.gridSize.w, 0, this.gridSize));
+            this.solidArea.push(new SolidArea(this.context, this.id++, i * this.gridSize.w, this.canvas.height - this.gridSize.h, this.gridSize));
+        }
+        //vertical
+        for (var j = 1; j < this.yTiles - 1; j++) {
+            this.solidArea.push(new SolidArea(this.context, this.id++, 0, j * this.gridSize.h, this.gridSize));
+            this.solidArea.push(new SolidArea(this.context, this.id++, this.canvas.width - this.gridSize.w, j * this.gridSize.h, this.gridSize));
+        }
+
+        if (this.gameSize == 20) {
             for (var i = 0; i < 6; i++) {
                 for (var j = 0; j < 4; j++) {
                     if (i == 0 && j == 0 || i == 5 && j == 3) {
                         continue;
                     }
-                    var bot = new Bot(this.context, this.id++,
-                        i * 4 * this.gridSize.w + 1 * this.gridSize.w,
-                        j * 4 * this.gridSize.h + 1 * this.gridSize.h, this.gridSize,
-                        this.playerSize, 0);
-
-                    bot.botAI.init(this);
-                    this.players.push(bot)
                     if (i == 0 && j == 0) {
                         this.solidArea.push(new SolidArea(this.context, this.id++,
                             i * 4 * this.gridSize.w + 2 * this.gridSize.w,
@@ -354,7 +367,7 @@ function Game(canvas) {
 
                     }
                     else if (j % 2 == 1 || i % 2 == 1) {
-                        this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * i, this.gridSize.h * j, this.gridSize))
+                        //this.destroyableArea.push(new DestroyableArea(this.context, this.id++, this.gridSize.w * i, this.gridSize.h * j, this.gridSize))
                     }
                 }
             }
@@ -368,6 +381,7 @@ function Game(canvas) {
         }
 
         this.gameRunning = true;
+        console.log(this);
     }
 
     this.reset = function () {

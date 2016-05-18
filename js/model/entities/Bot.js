@@ -6,6 +6,7 @@ function Bot(cnt, id, x, y, size, difficulty) {
     this.botAI = new BotAI(this, difficulty);
     this.sprite = null;
     this.alive = true;
+    this.removed = false;
     this.speedX = 0;
     this.speedY = 0;
     this.PCmode = true;

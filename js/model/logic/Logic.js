@@ -18,7 +18,7 @@ function Logic(game) {
         //this.game.init();
     }
 
-    this.stopGame = function(){
+    this.stopGame = function () {
         this.game.stop();
     }
 
@@ -41,9 +41,22 @@ function Logic(game) {
         }
 
         if (input[32]) {
+            var hasBomb = false;
+            var flag = false;
             var c = getGridPlayerPosition(this.game.players[0], this.game);
-            var bombCoords = getGridTilePoint(c, this.game.xTiles, this.game.yTiles, this.game.gridSize.w, this.game.gridSize.h);
-            this.game.players[0].plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
+
+            for (var k = 0; k < this.game.players.length; k++) {
+                for (var m = 0; m < this.game.players[k].bombs.length; m++) {
+                    var p = getGridPlayerPosition(this.game.players[k].bombs[m], this.game);
+                    if (c == p) {
+                        flag = true;
+                    }
+                }
+            }
+            if (!flag) {
+                var bombCoords = getGridTilePoint(c, this.game.xTiles, this.game.yTiles, this.game.gridSize.w, this.game.gridSize.h);
+                this.game.players[0].plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
+            }
         }
 
         //player 2
@@ -62,6 +75,25 @@ function Logic(game) {
         if (input[83]) {
             this.game.players[1].speedY += 1;
         }
+
+        if (input[48]) {
+            var hasBomb = false;
+            var flag = false;
+            var c = getGridPlayerPosition(this.game.players[1], this.game);
+
+            for (var k = 0; k < this.game.players.length; k++) {
+                for (var m = 0; m < this.game.players[k].bombs.length; m++) {
+                    var p = getGridPlayerPosition(this.game.players[k].bombs[m], this.game);
+                    if (c == p) {
+                        flag = true;
+                    }
+                }
+            }
+            if (!flag) {
+                var bombCoords = getGridTilePoint(c, this.game.xTiles, this.game.yTiles, this.game.gridSize.w, this.game.gridSize.h);
+                this.game.players[1].plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
+            }
+        }
     }
 
 
@@ -76,19 +108,37 @@ function Logic(game) {
 
     this.updateGameStep = function () {
         if (this.game.gameRunning) {
-            //console.log("1")
             for (var i = 0; i < this.game.players.length; i++) {
+                if (!this.game.players[i].alive && !this.game.players[i].removed) {
+                    this.killPlayer(this.game.players[i]);
+                    this.game.players[i].direction = 5;
+                }
                 if (this.game.players[i].alive) {
                     if (this.game.players[i] instanceof Bot) {
                         //get bot moves
                         var nextMove = this.game.players[i].botAI.getNextMove(this.game);
                         this.game.players[i].speedX = nextMove[0];
                         this.game.players[i].speedY = nextMove[1];
+                        //wants to plant bomb
                         if (nextMove[2]) {
                             var c = getGridPlayerPosition(this.game.players[i], this.game);
                             var bombCoords = getGridTilePoint(c, this.game.xTiles, this.game.yTiles, this.game.gridSize.w,
                                 this.game.gridSize.h);
-                            this.game.players[i].plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
+
+                            var flag = false;
+                            var p = getGridPlayerPosition(this.game.players[i], this.game);
+
+                            for (var k = 0; k < this.game.players.length; k++) {
+                                for (var m = 0; m < this.game.players[k].bombs.length; m++) {
+                                    var c = getGridPlayerPosition(this.game.players[k].bombs[m], this.game);
+                                    if (c == p) {
+                                        flag = true;
+                                    }
+                                }
+                            }
+                            if (!flag) {
+                                this.game.players[i].plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
+                            }
                         }
                     }
                     //calculate potential movement direction and adjust for lateral lines
@@ -101,8 +151,15 @@ function Logic(game) {
                     }
                     //check for collisions
                     this.checkForCollisions(this.game.players[i], this.game);
+
                     //update player animation
                     this.updateAnimationCounter(this.game.players[i].animations[this.game.players[i].direction]);
+                    if (this.game.players[i] instanceof Bot) {
+                        if (this.game.players[i].x == this.game.players[i].botAI.previousX &&
+                            this.game.players[i].y == this.game.players[i].botAI.previousY) {
+                            this.game.players[i].moving = false;
+                        }
+                    }
                 }
             }
 
@@ -155,7 +212,7 @@ function Logic(game) {
                                 }
 
                                 for (var x = 0; x < this.game.destroyableArea.length; x++) {
-                                    if (bombb.fire[q]!= null && !this.game.destroyableArea[x].triggered &&
+                                    if (bombb.fire[q] != null && !this.game.destroyableArea[x].triggered &&
                                         getGridPosition(this.game.destroyableArea[x], this.game) ==
                                         getGridPosition(bombb.fire[q], this.game)) {
                                         this.game.destroyableArea[x].triggered = true;
@@ -193,14 +250,23 @@ function Logic(game) {
 
                 }
             }
-            //check if anyone still alive
+
+            //remove destroyed players
             var counter = 0;
             for (var i = 0; i < this.game.players.length; i++) {
-                if (this.game.players[i].alive == true) {
+                if (this.game.players[i].removed) {
                     counter++;
+                    console.log(this.game.players, i)
+                    this.game.players.splice(i, 1);
+                    console.log(this.game.players)
+                    return;
                 }
             }
-            if (counter <= 1) {
+            //console.log(counter);
+
+            //check if anyone still alive
+            var counter = 0;
+            if (this.game.players.length <= 1) {
                 if (!this.gameFinished) {
                     this.gameFinished = true;
                     this.endGame();
@@ -219,6 +285,12 @@ function Logic(game) {
         }, 1000)
     };
 
+    this.killPlayer = function (player) {
+        setTimeout(function () {
+            player.removed = true;
+            //console.log("getting rid of player")
+        }, 1000)
+    }
 
     this.checkForCollisions = function (player) {
         if (player.id === 0) {
@@ -228,7 +300,7 @@ function Logic(game) {
         var moveY = true;
         for (var i = 0; i < this.game.players.length; i++) {
             for (var j = 0; j < this.game.players[i].bombs.length; j++) {
-                if(player.bombs.indexOf(this.game.players[i].bombs[j])!=-1){
+                if (player.bombs.indexOf(this.game.players[i].bombs[j]) != -1) {
                     continue;
                 }
                 //test for bombs for each player
