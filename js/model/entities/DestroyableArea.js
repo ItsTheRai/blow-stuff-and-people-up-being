@@ -20,7 +20,7 @@ function DestroyableArea(cnt, id, x, y, size) {
     this.explosionInterval = 100;
 
     //draw the object
-    var ss = new SpriteSheet('/pureBomberman/media/finalSprites/box48.png', 48, 48);
+    var ss = new SpriteSheet('media/finalSprites/box48.png', 48, 48);
     this.sprite = new Animation(this.context, ss, 60, 0, 0);
 
     this.explode = function () {

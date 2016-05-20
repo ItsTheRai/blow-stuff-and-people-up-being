@@ -32,7 +32,7 @@ function Bomb(cnt, id, player, x, y, size, tileSize, power) {
     //interval fire exists
     this.explosionTimer = 500
 
-    var ss = new SpriteSheet('/pureBomberman/media/finalSprites/bomb.png', 32, 32)
+    var ss = new SpriteSheet('media/finalSprites/bomb.png', 32, 32)
     this.sprite = new Animation(this.context, ss, 50, 0, 5)
 
     //this.sprite = new Animation(this.context, ss, 10, 0, 5)

@@ -4,14 +4,9 @@
 window.onload = function () {
     function startGame() {
         this.canvas = document.getElementById("mycanvas");
-        this.canvas.width = 600;
-        this.canvas.height = 300;
+        this.canvas.width = 1000;
+        this.canvas.height = 500;
         this.context = this.canvas.getContext("2d");
-
-        //console.log(player0, player1)
-        //var myGame = new Game(context.canvas);
-
-        //var logic = new Logic(myGame);
 
         var service = new Service(new Game(this.canvas));
         var controller = new Controller(service);

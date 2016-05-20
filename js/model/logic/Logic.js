@@ -23,27 +23,50 @@ function Logic(game) {
     }
 
     this.updateMovement = function (input) {
+        //console.log(this.game.players)
         //left
         if (input[37]) {
-            this.game.players[0].speedX += -1;
+            for( var i = 0; i < this.game.players.length; i++){
+                if(this.game.players[i].id==0) {
+                    this.game.players[i].speedX += -1;
+                }
+            }
         }
         //right
         if (input[39]) {
-            this.game.players[0].speedX += 1;
+            for( var i = 0; i < this.game.players.length; i++){
+                if(this.game.players[i].id==0) {
+                    this.game.players[i].speedX += 1;
+                }
+            }
         }
         //up
         if (input[38]) {
-            this.game.players[0].speedY += -1;
+            for( var i = 0; i < this.game.players.length; i++){
+                if(this.game.players[i].id==0) {
+                    this.game.players[i].speedY += -1;
+                }
+            }
         }
         //down
         if (input[40]) {
-            this.game.players[0].speedY += 1;
+            for( var i = 0; i < this.game.players.length; i++){
+                if(this.game.players[i].id==0) {
+                    this.game.players[i].speedY += 1;
+                }
+            }
         }
 
         if (input[32]) {
+            var player;
+            for( var i = 0; i < this.game.players.length; i++){
+                if(this.game.players[i].id==0) {
+                    player = this.game.players[i];
+                }
+            }
             var hasBomb = false;
             var flag = false;
-            var c = getGridPlayerPosition(this.game.players[0], this.game);
+            var c = getGridPlayerPosition(player, this.game);
 
             for (var k = 0; k < this.game.players.length; k++) {
                 for (var m = 0; m < this.game.players[k].bombs.length; m++) {
@@ -54,32 +77,58 @@ function Logic(game) {
                 }
             }
             if (!flag) {
+
                 var bombCoords = getGridTilePoint(c, this.game.xTiles, this.game.yTiles, this.game.gridSize.w, this.game.gridSize.h);
-                this.game.players[0].plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
+                console.log(bombCoords)
+                console.log(player);
+                player.plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
             }
         }
 
         //player 2
         if (input[65]) {
-            this.game.players[1].speedX += -1;
+            for( var i = 0; i < this.game.players.length; i++){
+                if(this.game.players[i].id==1) {
+                    this.game.players[i].speedX += -1;
+                }
+            }
         }
         //d
         if (input[68]) {
-            this.game.players[1].speedX += 1;
+            for( var i = 0; i < this.game.players.length; i++){
+                if(this.game.players[i].id==1) {
+                    this.game.players[i].speedX += 1;
+                }
+            }
         }
         //w
         if (input[87]) {
-            this.game.players[1].speedY += -1;
+            for( var i = 0; i < this.game.players.length; i++){
+                if(this.game.players[i].id==1) {
+                    this.game.players[i].speedY += -1;
+                }
+            }
         }
         //s
         if (input[83]) {
-            this.game.players[1].speedY += 1;
+            for( var i = 0; i < this.game.players.length; i++){
+                if(this.game.players[i].id==1) {
+                    this.game.players[i].speedY += 1;
+                }
+            }
         }
 
         if (input[48]) {
+            var player;
+            for( var i = 0; i < this.game.players.length; i++){
+                if(this.game.players[i].id==1) {
+                    player = this.game.players[i];
+                    break;
+                }
+            }
             var hasBomb = false;
             var flag = false;
-            var c = getGridPlayerPosition(this.game.players[1], this.game);
+            var c = getGridPlayerPosition(player, this.game);
 
             for (var k = 0; k < this.game.players.length; k++) {
                 for (var m = 0; m < this.game.players[k].bombs.length; m++) {
@@ -91,7 +140,7 @@ function Logic(game) {
             }
             if (!flag) {
                 var bombCoords = getGridTilePoint(c, this.game.xTiles, this.game.yTiles, this.game.gridSize.w, this.game.gridSize.h);
-                this.game.players[1].plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
+                player.plantBomb(bombCoords[0], bombCoords[1], this.game.gridSize);
             }
         }
     }
@@ -204,6 +253,9 @@ function Logic(game) {
                                         getGridPosition(bombb.fire[q], this.game)) {
                                         //window.alert("you died")
                                         //TODO restore this if
+                                        if(this.game.players[x].godMode){
+                                            continue;
+                                        }
                                         this.game.players[x].alive = false
                                         this.game.players[x].direction = 5;
                                         //flag for removal of objects
@@ -280,8 +332,10 @@ function Logic(game) {
         var self = this;
         setTimeout(function () {
             self.game.gameRunning = false;
+            self.game.gameloopSound.stop();
             self.gameFinished = false;
             console.log("stopping game");
+            //self.game = null;
         }, 1000)
     };
 

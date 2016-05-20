@@ -14,6 +14,6 @@ function SolidArea(cnt, id, x, y, size) {
     //this.height = height;
     this.context = cnt;
     //draw the object
-    var ss = new SpriteSheet('/pureBomberman/media/finalSprites/wall48.png', 48, 48);
+    var ss = new SpriteSheet('media/finalSprites/wall48.png', 48, 48);
     this.sprite = new Animation(this.context, ss, 60, 0, 0);
 }

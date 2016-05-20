@@ -2,6 +2,7 @@
  * Created by rai on 14/05/16.
  */
 function Bot(cnt, id, x, y, size, difficulty) {
+    this.bombId = 0;
     this.bombEscape = false;
     this.botAI = new BotAI(this, difficulty);
     this.sprite = null;
@@ -32,15 +33,15 @@ function Bot(cnt, id, x, y, size, difficulty) {
     this.direction = 0;
     this.animations = [];
     //set up all animations
-    var ss1 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_front48.png', 48, 48);
-    var ss2 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_front_left48.png', 48, 48);
-    var ss3 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_left48.png', 48, 48);
+    var ss1 = new SpriteSheet('media/finalSprites/2minirai_front48.png', 48, 48);
+    var ss2 = new SpriteSheet('media/finalSprites/2minirai_front_left48.png', 48, 48);
+    var ss3 = new SpriteSheet('media/finalSprites/2minirai_left48.png', 48, 48);
 
-    var ss4 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_back_left48.png', 48, 48);
-    var ss5 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_back48.png', 48, 48);
-    var ss6 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_back_right48.png', 48, 48);
-    var ss7 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_right48.png', 48, 48);
-    var ss8 = new SpriteSheet('/pureBomberman/media/finalSprites/2minirai_front_right48.png', 48, 48);
+    var ss4 = new SpriteSheet('media/finalSprites/2minirai_back_left48.png', 48, 48);
+    var ss5 = new SpriteSheet('media/finalSprites/2minirai_back48.png', 48, 48);
+    var ss6 = new SpriteSheet('media/finalSprites/2minirai_back_right48.png', 48, 48);
+    var ss7 = new SpriteSheet('media/finalSprites/2minirai_right48.png', 48, 48);
+    var ss8 = new SpriteSheet('media/finalSprites/2minirai_front_right48.png', 48, 48);
 
     this.animations.push(new Animation(this.context, ss1, 5 / this.speed, 0, 0));
     this.animations.push(new Animation(this.context, ss1, 5 / this.speed, 0, 7));
@@ -56,7 +57,7 @@ function Bot(cnt, id, x, y, size, difficulty) {
         if (this.bombs.length < this.maxbombs) {
             var middleX = tileX + (gridSize.w - this.bombsize) / 2;
             var middleY = tileY + (gridSize.h - this.bombsize) / 2;
-            var bomb = new Bomb(this.context, this.id++, this, middleX, middleY, {
+            var bomb = new Bomb(this.context, this.bombId++, this, middleX, middleY, {
                 w: this.bombsize,
                 h: this.bombsize
             }, gridSize, this.power);

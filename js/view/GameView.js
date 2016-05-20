@@ -150,7 +150,6 @@ function GameView(service) {
         //context.rect(player.x, player.y, player.size.w, player.size.h);
         //context.stroke();
         this.drawSprite(context, player.x, player.y, player.animations[player.direction])
-        console.log(player.direction);
     }
 
     this.updateObjectView = function (context, object) {

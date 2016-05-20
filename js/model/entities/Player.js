@@ -2,6 +2,8 @@
  * Created by rai on 14/05/16.
  */
 function Player(cnt, id, x, y, size) {
+    this.bombId = 0;
+    this.godMode = false;
     this.bombEscape = false;
     this.sprite = null;
     this.alive = true;
@@ -29,15 +31,15 @@ function Player(cnt, id, x, y, size) {
     this.direction = 0;
     this.animations = [];
     //set up all animations
-    var ss1 = new SpriteSheet('/pureBomberman/media/finalSprites/minirai_front48.png', 48, 48);
-    var ss2 = new SpriteSheet('/pureBomberman/media/finalSprites/minirai_front_left48.png', 48, 48);
-    var ss3 = new SpriteSheet('/pureBomberman/media/finalSprites/minirai_left48.png', 48, 48);
+    var ss1 = new SpriteSheet('media/finalSprites/minirai_front48.png', 48, 48);
+    var ss2 = new SpriteSheet('media/finalSprites/minirai_front_left48.png', 48, 48);
+    var ss3 = new SpriteSheet('media/finalSprites/minirai_left48.png', 48, 48);
 
-    var ss4 = new SpriteSheet('/pureBomberman/media/finalSprites/minirai_back_left48.png', 48, 48);
-    var ss5 = new SpriteSheet('/pureBomberman/media/finalSprites/minirai_back48.png', 48, 48);
-    var ss6 = new SpriteSheet('/pureBomberman/media/finalSprites/minirai_back_right48.png', 48, 48);
-    var ss7 = new SpriteSheet('/pureBomberman/media/finalSprites/minirai_right48.png', 48, 48);
-    var ss8 = new SpriteSheet('/pureBomberman/media/finalSprites/minirai_front_right48.png', 48, 48);
+    var ss4 = new SpriteSheet('media/finalSprites/minirai_back_left48.png', 48, 48);
+    var ss5 = new SpriteSheet('media/finalSprites/minirai_back48.png', 48, 48);
+    var ss6 = new SpriteSheet('media/finalSprites/minirai_back_right48.png', 48, 48);
+    var ss7 = new SpriteSheet('media/finalSprites/minirai_right48.png', 48, 48);
+    var ss8 = new SpriteSheet('media/finalSprites/minirai_front_right48.png', 48, 48);
 
     this.animations.push(new Animation(this.context, ss1, 5 / this.speed, 0, 0));
     this.animations.push(new Animation(this.context, ss1, 5 / this.speed, 0, 7));
@@ -58,7 +60,7 @@ function Player(cnt, id, x, y, size) {
         if (this.bombs.length < this.maxbombs) {
             var middleX = tileX + (gridSize.w - this.bombsize) / 2;
             var middleY = tileY + (gridSize.h - this.bombsize) / 2;
-            var bomb = new Bomb(this.context, this.id++, this, middleX, middleY, {
+            var bomb = new Bomb(this.context, this.bombId++, this, middleX, middleY, {
                 w: this.bombsize,
                 h: this.bombsize
             },gridSize, this.power);

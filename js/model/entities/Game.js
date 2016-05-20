@@ -54,9 +54,9 @@ function Game(canvas) {
         console.log(this.id);
 
         //load sounds
-        this.bombSound = new Sound("/pureBomberman/sound/bombExplosion.wav");
-        this.powerupSound = new Sound("/pureBomberman/sound/powerUp.wav");
-        this.gameloopSound = new Sound("/pureBomberman/sound/gameloop_normal.mp3");
+        this.bombSound = new Sound("sound/bombExplosion.wav");
+        this.powerupSound = new Sound("sound/powerUp.wav");
+        this.gameloopSound = new Sound("sound/gameloop_normal.mp3");
         this.gameloopSound.setRepeat(true);
         this.gameloopSound.play();
         this.canvas.width = this.gridSize.w * this.xTiles;
@@ -390,4 +390,33 @@ function Game(canvas) {
     this.stop = function () {
         clearInterval(this.interval);
     }
+
+    self = this;
+    cheet('↑ ↑ ↓ ↓ ← → ← → b a', function () {
+        var player;
+        for(var i=0; i < self.players.length; i++){
+            if(self.players[i].id ==0){
+                player = self.players[i];
+                break;
+            }
+        }
+        activateKonamicode(player);
+        alert('god mode for player 1');
+    });
+    cheet('↑ ↑ ↓ ↓ ← → ← → a b', function () {
+        var player;
+        if(self.playerCount==1){
+            return;
+        }
+        else {
+            for (var i = 0; i < self.players.length; i++) {
+                if (self.players[i].id == 1) {
+                    player = self.players[i];
+                    break;
+                }
+            }
+            activateKonamicode(player);
+            alert('god mode for player 2');
+        }
+    });
 }

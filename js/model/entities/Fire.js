@@ -12,6 +12,6 @@ function Fire(cnt, id, x, y, size) {
         w: size.w,
         h: size.h,
     };
-    var ss = new SpriteSheet('/pureBomberman/media/finalSprites/fire.png', 38, 38);
+    var ss = new SpriteSheet('media/finalSprites/fire.png', 38, 38);
     this.sprite = new Animation(this.context, ss, 10, 0, 5);
 }

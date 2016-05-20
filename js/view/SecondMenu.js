@@ -224,9 +224,10 @@ function SecondMenu() {
         for (var i = 0; i < service.logic.game.players.length; i++) {
             if (service.logic.game.players[i].alive) {
                 winner = service.logic.game.players[i].id;
+                break;
             }
         }
-        console.log()
+        winner++;
         elements.push({
             colour: '#0000aa',
             width: 200,
